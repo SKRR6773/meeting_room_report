@@ -1,0 +1,20 @@
+# meeting_topic
+    - id
+    - meeting_topic_name
+    - meeting_topic_details
+    - meeting_people_count
+
+# meeting_questions
+    - id
+    - question_text
+
+# meeting_vote_history
+    - id
+    - score
+    - question_id
+    - vote_id
+
+# meeting_vote
+    - id
+    - empcode
+    - topic_id

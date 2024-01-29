@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+    <style>
+        body
+        {
+            background: #f7f7f7;
+        }
+
+        input[type=radio]
+        {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container my-5 p-0 m-auto rounded-3">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <header class="d-flex" style="flex-direction: column;">
+                    <div class="header d-flex mb-2">
+                        <h1 class="mx-auto">ทำแบบฟอร์ม</h1>
+                    </div>
+                    <div class="score-show ms-auto">
+                        <h2 id="h1ScoreShowEl">0/10</h2>
+                    </div>
+                </header>
+                <div class="container-fluid">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center" rowspan="2" align="center">รายการ</th>
+                                <th colspan="6" class="text-center">ระดับความเห็นด้วย 1น้อยสุด - 5 มากสุด</th>
+                            </tr>
+                            <tr>
+                                <th onclick="setAllSelectScore(1)" class="text-center">1</th>
+                                <th onclick="setAllSelectScore(2)" class="text-center">2</th>
+                                <th onclick="setAllSelectScore(3)" class="text-center">3</th>
+                                <th onclick="setAllSelectScore(4)" class="text-center">4</th>
+                                <th onclick="setAllSelectScore(5)" class="text-center">5</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+            
+                        </tbody>
+                    </table>
+                </div>
+                <footer class="d-flex">
+                    <button type="submit" class="btn btn-primary ms-auto" data-btn-toggle-shadow>ส่งแบบฟอร์ม</button>
+                </footer>
+            </div>
+        </div>
+
+        <div class="card shadow pb-3">
+            <header class="mt-2 mb-3">
+                <div class="d-flex">
+                    <h1 class="mx-auto">แชร์คิวอาร์โค้ดนี้ให้เพื่อนๆ</h1>
+                </div>
+            </header>
+            <div class="d-flex" style="flex-direction: column;">
+                <div id="qrcode_share" class="mx-auto"></div>
+            </div>
+            <footer class="mt-3">
+                <div class="container" style="display: flex; align-items: center; justify-content: center;">
+                    <a href="http://line.me/R/msg/text/?Netflix%20%E0%B9%80%E0%B8%9C%E0%B8%A2%E0%B8%9A%E0%B8%A3%E0%B8%B4%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%80%E0%B8%81%E0%B8%A1%E0%B8%9A%E0%B8%99%E0%B9%81%E0%B8%9E%E0%B8%A5%E0%B8%95%E0%B8%9F%E0%B8%AD%E0%B8%A3%E0%B9%8C%E0%B8%A1%20%E0%B8%A1%E0%B8%B5%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%80%E0%B8%A5%E0%B9%88%E0%B8%99%E0%B9%80%E0%B8%9E%E0%B8%B4%E0%B9%88%E0%B8%A1%E0%B8%82%E0%B8%B6%E0%B9%89%E0%B8%99%203%20%E0%B9%80%E0%B8%97%E0%B9%88%E0%B8%B2%E0%B9%83%E0%B8%99%E0%B8%9B%E0%B8%B5%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%9C%E0%B9%88%E0%B8%B2%E0%B8%99%E0%B8%A1%E0%B8%B2%20https%3A%2F%2Fwww.blognone.com%2Fnode%2F137835"><img src="https://www.blognone.com/sites/all/themes/blognone43/images/linebutton.png" width="76px" alt="LINE it!"></a>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+
+    <script>
+        let tbodyEl;
+        let h1ScoreShowEl;
+        let sumScore = 0;
+        let sumScoreTotal = 0;
+
+        let qrcode_share;
+
+        const radioGroupScore = {};
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            tbodyEl = document.getElementById('tbody');
+            h1ScoreShowEl = document.getElementById('h1ScoreShowEl');
+
+            qrcode_share = document.getElementById('qrcode_share');
+
+
+            [
+                "มีการทักทายทกคนเพื่อสร้างบรรยากาศที่ดี",
+                "ทุกคนได้รับการปฏิบัติด้วยความเคารพ",
+                "มีการแสดงความสนใจอย่างเท่าเทียมกันต่อทุกไอเดีย",
+                "ผู้คนได้รับการรับฟังอย่างตั้งใจ",
+                "การสนทนาใช้ภาษาที่ฉันเข้าใจได้",
+                "มีการยืนยันว่าทุกคนเข้าใจวัตถุประสงค์และผลการประชุม",
+                "มีการแชร์วาระและเอกสารหรือการสื่อสารก่อนการประชุม",
+                "มีการแสดงความเห็น ถามคำถามที่เปิดกว้างและตรงไปตรงมา?",
+                "มีการตัดสินใจร่วมกันโดยคำนึงถึงความคิดเห็นและข้อกังวลของทุกคน?",
+                "ทุกคนในการประชุมแสดงความกระตือรือร้น?"
+            ].forEach((row, index) => {
+                const trEl = document.createElement('tr');
+                
+                const tdNameEl = document.createElement('td');
+                tdNameEl.textContent = `${index + 1}). ${row}`;
+                trEl.appendChild(tdNameEl);
+
+
+                [1, 2, 3, 4, 5].forEach((subrow, subindex) => {
+                    const score = subindex + 1;
+                    const tdScoreEl = document.createElement('td');
+                    tdScoreEl.className = "text-center";
+                    const checkScoreEl = document.createElement('input');
+
+                    checkScoreEl.type = 'radio';
+                    checkScoreEl.className = "form-check-input ms-auto";
+
+                    const groupName = `grp_${index.toString()}`;
+
+                    radioGroupScore[groupName] = 0;
+                    checkScoreEl.name = groupName;
+                    checkScoreEl.setAttribute('data-score', subrow.toString());
+                    checkScoreEl.value = subrow.toString();
+
+
+                    checkScoreEl.onclick = () => 
+                    {
+                        const _groupName = checkScoreEl.getAttribute('name');
+                        const _Score = Number.parseInt(checkScoreEl.getAttribute('data-score'));
+                        
+                        radioGroupScore[_groupName] = _Score;
+                        updateTotalScore();
+                    }
+
+                    tdScoreEl.onclick = () => 
+                    {
+                        const _input = tdScoreEl.querySelector('input')
+                        _input.focus();
+                        _input.click();
+                    }
+
+                    tdScoreEl.appendChild(checkScoreEl);
+                    trEl.appendChild(tdScoreEl);
+                });
+
+                sumScoreTotal += 5;
+
+                tbodyEl.appendChild(trEl);
+            });
+
+
+            updateTotalScore();
+
+
+            // create qr code share
+            const qrcode = new QRCode(qrcode_share, {
+                text: "whoami"
+            });
+
+
+
+            document.querySelectorAll('[data-btn-toggle-shadow]').forEach((row) => {
+                row.addEventListener('mouseenter', (e) => {
+                    row.classList.add('shadow');
+                });
+
+                row.addEventListener('mouseleave', (e) => {
+                    row.classList.remove('shadow');
+                });
+            });
+        });
+
+
+        const updateTotalScore = () => 
+        {
+            sumScore = Object.values(radioGroupScore).reduce((curr, row) => {
+                curr += row;
+                return curr;
+            });
+
+            h1ScoreShowEl.textContent = `${sumScore}/${sumScoreTotal} คะแนน`;
+        }
+
+        const setAllSelectScore = (score) => 
+        {
+            Object.keys(radioGroupScore).forEach((row) => {
+                document.querySelectorAll(`[name=${row}]`).forEach((subrow) => {
+                    if (score.toString() === subrow.value)
+                    {
+                        subrow.checked = true;
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

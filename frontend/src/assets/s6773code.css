@@ -1,0 +1,54 @@
+:root
+{
+    --sk-no-light: #ebe9e9;
+    --sk-no-light2: #f0f2f5;
+    --sk-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
+    --sk-shadow2: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    --sk-shadow-navbar: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+
+*
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.shadow-custom
+{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.container-center
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+
+.pt-none
+{
+    pointer-events: none;
+}
+
+.cursor-pointer
+{
+    cursor: pointer;
+}
+
+
+.text-decoration-none
+{
+    text-decoration: none;
+}
+
+.one-line
+{
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
+    text-overflow: ellipsis;
+}
