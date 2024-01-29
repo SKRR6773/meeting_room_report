@@ -37,17 +37,12 @@
         {
             console.error(err);
         }
-
-        console.log(_result);
         
         progres_el.value.style.width = `${_result}%`;
     }
 
 
     onMounted(() => {
-        console.log(props.curr_progre);
-        console.log(props.full_progre);
-
         Calculater();
     });
 

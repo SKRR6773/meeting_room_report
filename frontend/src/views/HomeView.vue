@@ -4,4 +4,6 @@
         <button class="btn btn-success">Let's Go</button>
     </div>
 </template>
-<script></script>
+<script setup>
+    
+</script>

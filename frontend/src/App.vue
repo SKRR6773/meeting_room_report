@@ -5,6 +5,7 @@
             <Navbar />
         </header>
         <section class="container mt-4">
+            <hr>
             <router-view v-slot="{ Component }">
                 <Transition name="fade" mode="out-in">
                     <component :is="Component" />
@@ -14,11 +15,31 @@
     </div>
 </template>
 <script setup>
+    import { onMounted } from 'vue';
     import { RouterLink, RouterView } from 'vue-router';
+    import { useStore } from 'vuex';
     import '@/socket';
 
 
     import Navbar from './components/Navbar/NavbarComponent.vue';
+
+
+    const store = useStore();
+
+
+    onMounted(() => {
+        if (!!localStorage.getItem('user_details') && !!localStorage.getItem('user_token'))
+        {
+            const user_details = localStorage.getItem('user_details');
+            const user_token = localStorage.getItem('user_token');
+
+
+            store.commit('updateUserDetails', user_details);
+            store.commit('updateUserToken', user_token);
+
+            store.commit('verifyUserTokenAndUpdateUser');
+        }
+    });
 </script>
 <style scoped>
     .fade-enter-active,

@@ -1,5 +1,6 @@
+const employee_api = require('../apis/employee.api');
+const authorization_modules = require('../lib/authorization.module');
 const user_roles_service = require('./user_role.service');
-const jwt_conv_lang = require('../data/jwt_conv_lang.json');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
@@ -7,38 +8,30 @@ const path = require('path');
 
 
 module.exports = new class {
-    constructor()
-    {
-        this.JWT = fs.readFileSync(path.join(__dirname, '..', '__secret__', 'jwt.key'));
-        this.JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
-    }
-
-    CreateToken(data={})
-    {
-        return jwt.sign(data, this.JWT, {
-            expiresIn: this.JWT_EXPIRES_IN
-        });
-    }
-
-    VerifyToken(token)
+    async GetEmployeeDetailsTokenWithEmployeeCodeAndEmployeePassword(empcode, emppassword)
     {
         try
         {
-            return [true, jwt.verify(token, this.JWT)];
+            const [metadata, data] = await employee_api.AsyncGetEmployeeDetailsWithEmployeeCodeAndEmployeePassword(empcode, emppassword);
+
+
+            if (metadata)
+            {
+                const user_role = await user_roles_service.GetUserRoleWithEmployeeCode(data.EmployeeCode);
+                const token_response = authorization_modules.CreateToken({...data, role: user_role});
+                return [true, {
+                    token: token_response,
+                    data: {...employee_api.FilterEmployeeDetails(data), role: user_role}
+                }];
+            }
+            else
+            {
+                return [false, data];
+            }
         }
         catch (err)
         {
-            if (err instanceof jwt.JsonWebTokenError)
-            {
-                return [false, this.ConvertErrMessage(err.message)];
-            }
-
-            return [false, "somthing failed!"];
+            return [false, data];
         }
-    }
-
-    ConvertErrMessage(message)
-    {
-        return message in jwt_conv_lang ? jwt_conv_lang[message] : message;
     }
 };

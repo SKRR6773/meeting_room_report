@@ -12,7 +12,7 @@ route.post('/test_call', (req, res) => {
 
     const body = req.body;
 
-    body.values = JSON.parse(body.values);
+    // body.values = JSON.parse(body.values);
 
     return res.status(200).json({
         body: body,

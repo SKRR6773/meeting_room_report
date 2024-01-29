@@ -41,6 +41,7 @@ const meetingHooksRouting = require('./routes/meeting_hooks.route');
 const meetingTopicRouting = require('./routes/meeting_topics.route');
 const meetingVotesRouting = require('./routes/meeting_votes.route');
 const employeeRouting = require('./routes/employee.route');
+const authRouting = require('./routes/auth.route');
 
 // routing . use
 app.use('/debug', debugRouting);
@@ -49,6 +50,7 @@ app.use('/meeting_hooks', meetingHooksRouting);
 app.use('/meeting_topic', meetingTopicRouting);
 app.use('/meeting_votes', meetingVotesRouting);
 app.use('/employee', employeeRouting);
+app.use('/auth', authRouting);
 
 // socket server config
 const SocketServe = require('./socket_serve/socket_serve');

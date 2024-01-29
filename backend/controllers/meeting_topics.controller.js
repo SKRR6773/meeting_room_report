@@ -1,6 +1,7 @@
 const my_service = require('../services/meeting_topics.service');
-const { responseEnd } = require('../lib/modules');
+const { responseEnd, tryParseInteget } = require('../lib/modules');
 const user_roles_service = require('../services/user_role.service');
+const meeting_rooms_service = require('../services/meeting_rooms.service');
 
 
 let error = [];
@@ -138,6 +139,112 @@ module.exports = new class {
         }
         catch (err)
         {
+            return res.status(500).json(responseEnd(error, warning, succ, data));
+        }
+    }
+
+
+
+    async GetAllRoom(req, res)
+    {
+        try
+        {
+            error = [];
+            warning = [];
+            data = [];
+            succ = [];
+
+
+            let response_binding = {};
+
+            if (!(await meeting_rooms_service.GetAll(response_binding)))
+            {
+                error.push("get all meeting room service error!");
+            }
+            else
+            {
+                if (response_binding.value)
+                {
+                    data.push(response_binding.value);
+                    succ.push("get all meeting rooms successfully!");
+                }
+                else
+                {
+                    error.push("Something failed, can't get all meeting room service, please contract deverlopper!");
+                }
+            }
+
+            return res.status(200).json(responseEnd(error, warning, succ, data));
+        }
+        catch (err)
+        {
+            return res.status(500).json();
+        }
+    }
+
+
+
+    async CreateTopic(req, res)
+    {
+        try
+        {
+            error = [];
+            warning = [];
+            data = [];
+            succ = [];
+
+
+            const { name, room_id, people_count, details } = req.body;
+
+
+            if ((await my_service.IsTopicNameSameAlready(name)))
+            {
+                warning.push("ชื่อหัวข้อประชุมที่คุณตั้งขึ้นเหมือนกับชื่อประชุมที่มีอยู่ในระบบ ทำให้อาจจะเกิดความสับสนได้นะครับ");
+            }
+            
+
+            if (!(await meeting_rooms_service.RoomIdIsExists(room_id)))
+            {
+                error.push("ชื่อห้องประชุมที่คุณได้เลือกถูกลบไปแล้ว หรืออาจะะไม่มีอยู่จริง!");
+            }
+            else
+            {
+                const [metadata, _data] = tryParseInteget(people_count);
+
+
+                if (!metadata)
+                {
+                    error.push("จำนวนผู้เข้าร่วมประชุมต้องเป็นจำนวนเต็มเท่านั้น");
+                }
+                else
+                {
+                    if (_data < 2)
+                    {
+                        warning.push("จำนวนผู้เข้าร่วมประชุมต้องควรมากกว่า 1คน ขึ้นไป");
+                    }
+                }
+            }
+
+
+            if (error.length === 0)
+            {
+                if ((await my_service.CreateTopic(name, room_id, details, people_count)))
+                {
+                    succ.push("Create Topic Successfully!");
+                }
+                else
+                {
+                    error.push("Create Topic Somthing Failed!");
+                }
+            }
+
+            return res.status(200).json(responseEnd(error, warning, succ, data));
+        }
+        catch (err)
+        {
+            console.error(err);
+
+            
             return res.status(500).json(responseEnd(error, warning, succ, data));
         }
     }

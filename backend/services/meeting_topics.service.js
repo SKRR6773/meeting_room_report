@@ -6,18 +6,16 @@ const meeting_rooms_model = require('../models/meeting_room.model');
 
 
 module.exports = new class {
-    async CreateTopic(name, room_name, details, people_count)
+    async CreateTopic(name, room_id, details, people_count)
     {
         try
         {
             const response = await meeting_topic_modal.create({
                 name, 
-                room_name,
+                room_id,
                 details,
                 people_count
             });
-
-            console.log(response);
 
             return true;
         }
@@ -166,6 +164,29 @@ module.exports = new class {
         }
         catch (err)
         {
+
+            return false;
+        }
+    }
+
+
+    async IsTopicNameSameAlready(topic_name)
+    {
+        try
+        {
+            return (await sequelize.query(`
+                SELECT name FROM meeting_topics WHERE name = :topic_name
+            `, {
+                type: QueryTypes.SELECT,
+                replacements: {
+                    topic_name
+                }
+            })).length === 1;
+        }
+        catch (err)
+        {
+            console.error(err);
+
 
             return false;
         }

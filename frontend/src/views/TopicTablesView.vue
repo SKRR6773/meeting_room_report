@@ -24,40 +24,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <form @submit.prevent="_CreateMeetRoomTopic" method="post">
-                            <div class="container-fluid">
-                                <!-- <p class="text-secondary" style="font-weight: 500;">แจ้งให้เราทราบคำถาม ข้อเสนอแนะ และข้อกังวลของคุณโดยกรอกแบบฟอร์ม</p> -->
-                                <div class="row gy-3">
-                                    <div class="col-md-12 col-lg-4">
-                                        <div class="form-floating">
-                                            <input type="text" name="name" class="form-control" placeholder="ชื่อประชุม" required>
-                                            <label for="floatingPassword">ชื่อประชุม</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-lg-4">
-                                        <div class="form-floating">
-                                            <input type="text" name="room_id" class="form-control" placeholder="ห้องประชุม" required>
-                                            <label for="floatingPassword">ห้องประชุม</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-lg-4">
-                                        <div class="form-floating">
-                                            <input type="number" min="1" name="people_count" class="form-control" placeholder="จำนวนผู้เข้าร่วม" value="1" required>
-                                            <label for="floatingPassword">จำนวนผู้เข้าร่วม</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-floating">
-                                            <textarea class="form-control" name="details" placeholder="รายละเอียด" style="height: 30vh;" required></textarea>
-                                            <label for="floatingTextarea2">รายละเอียด</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="d-flex mt-3">
-                                    <button type="submit" class="btn btn-primary px-4 py-2 fw-bold rounded-1">สร้าง</button>
-                                </div>
-                            </div>
-                        </form>
+                        <CreateMeetRoomTopicFormComponent @submit="_CreateMeetRoomTopic" />
                     </div>
                 </div>
             </div>
@@ -72,10 +39,14 @@
     import my_modules from '@/lib/it_system_module';
     import { Modal } from 'bootstrap/dist/js/bootstrap.bundle';
     import jsCookies from 'js-cookie';
+    import { useStore } from 'vuex';
 
     
     import TableTopicComponent from '../components/TopicTableComponent/TableTopicComponent.vue';
+    import CreateMeetRoomTopicFormComponent from '../components/FormComponents/CreateMeetRoomTopicFormComponent.vue';
 
+
+    const store = useStore();
 
 
     const modalCreateTopic = ref();
@@ -83,7 +54,7 @@
     
     const CreateMeetRoomTopic = () => 
     {
-        if (jsCookies.get("username") && jsCookies.get("password"))
+        if (store.getters.getAuthed)
         {
             Modal.getOrCreateInstance(modalCreateTopic.value).show();
             return;
@@ -167,12 +138,43 @@
                                             if (result.isConfirmed)
                                             {
                                                 password = result.value;
-        
                                                 
-                                                jsCookies.set("username", username);
-                                                jsCookies.set("password", password);
-                                                
-                                                Modal.getOrCreateInstance(modalCreateTopic.value).show();
+                                                const formData = new FormData;
+                                                formData.append("empcode", username);
+                                                formData.append("emppassword", password);
+
+                                                axios({
+                                                    url: import.meta.env.VITE_VUE_API_URL + "/auth/login",
+                                                    method: 'POST',
+                                                    data: formData
+                                                }).then((response) => {
+                                                    console.log("Response => ");
+                                                    console.log(response);
+
+                                                    my_modules.sweetAlertReport(response.data, function(){
+                                                        // errors ...
+                                                    }, function(_data){
+                                                        console.log("Login Successfully!");
+                                                        console.log("Data => ");
+                                                        console.log(_data);
+                                                        console.log(_data.data);
+
+                                                        const { data, token } = _data.data;
+
+                                                        store.commit('updateUserDetails', data);
+                                                        store.commit('updateUserToken', token);
+
+                                                        localStorage.setItem('user_details', JSON.stringify(data));
+                                                        localStorage.setItem('user_token', token);
+
+                                                        Modal.getOrCreateInstance(modalCreateTopic.value).show();
+
+                                                    }, false, null, false, true);
+                                                }).catch((err) => {
+                                                    console.error(err);
+
+                                                    my_modules.sweetAlertServerError();
+                                                });
                                             }
                                             else
                                             {
@@ -205,7 +207,22 @@
 
 
         axios({
-            url: import.meta.env.VITE_VUE_API_URL + "/",
+            url: import.meta.env.VITE_VUE_API_URL + "/meeting_topic/create_topic",
+            method: "POST",
+            data: formData
+        }).then((response) => {
+            my_modules.sweetAlertReport(response.data, function(){
+                // errors...
+            }, (data) => {
+                // succ
+
+                console.log("Data => ");
+                console.log(data.data);
+            }, false, function(){
+                // warnings ...
+            }, false, false);
+        }).catch((err) => {
+            console.error(err);
         });
     }
 

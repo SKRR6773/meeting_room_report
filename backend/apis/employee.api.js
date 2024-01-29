@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-module.exports = new class {
+module.exports = new class Employee {
     CallBackGetEmployeeDetailsWithEmployeeCode(empcode, cb)
     {
         try
@@ -47,4 +47,52 @@ module.exports = new class {
             });
         }
     }
-}
+
+
+    async AsyncGetEmployeeDetailsWithEmployeeCodeAndEmployeePassword(empcode, emppassword)
+    {
+        try
+        {
+            const _result = await axios.post(
+                process.env.ERP_URL + "/employee/get_EmployeeAndUsername",
+                {
+                    empcode
+                }
+            );
+            
+            const err_message = "Username or Password Invalid!";
+
+            if (_result.data.length === 1)
+            {
+                if (_result.data[0].EmployeePassword === emppassword)
+                {
+                    return [true, _result.data[0]];
+                }
+                else
+                {
+                    return [false, err_message];
+                }
+            }
+            else return [false, err_message];
+        }
+        catch (err)
+        {
+            console.error(err);
+
+
+            return [false, "something error!"];
+        }
+    }
+
+
+    FilterEmployeeDetails(emp_details)
+    {
+        const {
+            E_ImagePath, EmployeeCode, LocalFirstName, LocalLastName, E_IsActive
+        } = emp_details;
+
+        return {
+            E_ImagePath, EmployeeCode, LocalFirstName, LocalLastName, E_IsActive
+        };
+    }
+};

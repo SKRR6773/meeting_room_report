@@ -36,7 +36,7 @@
 
     function Submit(value)
     {
-        const { form, values } = value;
+        const { form, values, cb_toggle_submit_disabled } = value;
 
 
         console.log("Response => ");
@@ -57,6 +57,7 @@
                 // error
             }, function(){
                 // success
+                cb_toggle_submit_disabled();
             }, );
         }).catch((err) => {
             console.error(err);

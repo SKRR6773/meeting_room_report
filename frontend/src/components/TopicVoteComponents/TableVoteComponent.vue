@@ -60,7 +60,10 @@
 
                 </section>
                 <footer class="d-flex">
-                    <button type="submit" class="btn btn-primary ms-auto" autofocus>ส่งแบบฟอร์ม</button>
+                    <button type="submit" class="btn btn-primary ms-auto" autofocus>
+                        <span class="spinner-grow spinner-grow-sm spinner visually-hidden"></span>
+                        ส่งแบบฟอร์ม
+                    </button>
                 </footer>
             </div>
         </form>
@@ -108,6 +111,9 @@
 
     const Submit = (e) => 
     {
+
+        toggleSubmitButtonDisabledWithFormEl(e.target);
+
         const _form = e.target;
         const result = radioEls.value.filter((row) => {
             return row.checked;
@@ -125,8 +131,16 @@
 
         return emits('submit', {
             form: _form,
-            values: result
+            values: result,
+            cb_toggle_submit_disabled: () => toggleSubmitButtonDisabledWithFormEl(e.target)
         });
+    }
+
+    const toggleSubmitButtonDisabledWithFormEl = (formEl) => 
+    {
+        const _btnSubmit = formEl.querySelector('button[type=submit]');
+        _btnSubmit.querySelector('.spinner').classList.toggle("visually-hidden", _btnSubmit.disabled);
+        _btnSubmit.disabled = !_btnSubmit.disabled;
     }
 
     const SelectAllRowOfCol = (col) =>

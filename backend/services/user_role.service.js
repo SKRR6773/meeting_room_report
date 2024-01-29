@@ -25,4 +25,26 @@ module.exports = new class {
             return false;
         }
     }
+
+    async GetUserRoleWithEmployeeCode(empcode)
+    {
+        try
+        {
+            return (await sequelize.query(`
+                SELECT role FROM user_roles WHERE code = :empcode
+            `, {
+                type: QueryTypes.SELECT,
+                replacements: {
+                    empcode
+                }
+            }))[0].role;
+        }
+        catch (err)
+        {
+            console.error(err);
+
+
+            return [false, "something error, can't get user role!"];
+        }
+    }
 };
