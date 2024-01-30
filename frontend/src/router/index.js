@@ -23,6 +23,27 @@ const router = createRouter({
       name: 'topic table',
       component: () => import('../views/TopicTablesView.vue')
     },
+    {
+      path: '/report_all',
+      name: 'report page'
+    },
+    {
+      path: '/admin',
+      name: 'admin view',
+      component: () => import('../views/Admin/AdminHomeView.vue'),
+      children: [
+        {
+          path: 'home',
+          name: 'first admin view',
+          component: () => import('../components/AdminComponents/AdminFirstComponent.vue')
+        },
+        {
+          path: 'report_all',
+          name: 'admin report all',
+          component: () => import('../views/Admin/childrens/ReportAllView.vue')
+        }
+      ]
+    },
   ]
 })
 

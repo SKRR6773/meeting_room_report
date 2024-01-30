@@ -1,7 +1,6 @@
 <template>
     <div>
-        <!-- {{ $route.params }} -->
-        <div class="container-fluid">
+        <div class="container">
             <div class="container shadow p-0">
                 <TableVoteComponent :meeting_topic_id="topicData.id" :meeting_name="topicData.name" :meeting_room_name="topicData.room_name" @submit="Submit" />
             </div>
@@ -34,7 +33,7 @@
     });
 
 
-    function Submit(value)
+    const Submit = (value) =>
     {
         const { form, values, cb_toggle_submit_disabled } = value;
 
@@ -55,9 +54,11 @@
         }).then((response) => {
             my_modules.sweetAlertReport(response.data, function(){
                 // error
-            }, function(){
+            }, () => {
                 // success
                 cb_toggle_submit_disabled();
+
+                setTimeout(() => router.push(`/topic_review/${topicData.id}`), 500);
             }, );
         }).catch((err) => {
             console.error(err);

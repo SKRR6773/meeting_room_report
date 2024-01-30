@@ -248,4 +248,97 @@ module.exports = new class {
             return res.status(500).json(responseEnd(error, warning, succ, data));
         }
     }
+
+
+
+
+    async GetReportOfTopic(req, res)
+    {
+        try
+        {
+            error = [];
+            succ = [];
+            data = [];
+            warning = [];
+
+
+            const { topic_id } = req.body;
+
+
+            if (!(await my_service.TopicIdIsExists(topic_id)))
+            {
+                error.push("Topic not found!");
+            }
+            else
+            {
+                let response_binding = {};
+
+
+                if (!(await my_service.GetTopicReportData(topic_id, response_binding)))
+                {
+                    error.push("Get report data service Error!");
+                }
+                else
+                {
+                    if (response_binding.value)
+                    {
+                        const vote_history_data = response_binding.value;
+                        
+                        
+                        response_binding = {};
+                        
+                        if (!(await my_service.GetTopicVoteCount(topic_id, response_binding)))
+                        {
+                            error.push("Get vote count service error");
+                        }
+                        else
+                        {
+                            if (response_binding.value)
+                            {
+                                const vote_count = response_binding.value;
+                                
+                                
+                                data.push({
+                                    raw_data: vote_history_data.reduce((curr, row, index) => {
+                                        if (!(row.question_id in curr))
+                                        {
+                                            curr[row.question_id] = 0;
+                                        }
+        
+                                        curr[row.question_id] += (row.score / vote_count);
+        
+                                        return curr;
+                                    }, {})   
+                                });
+                                succ.push("Get report data successfully!");
+                            }
+                            else if (response_binding.value === 0)
+                            {
+                                error.push("การประชุมนี้ไม่มีการโหวตใดๆ");
+                            }
+                            else
+                            {
+                                error.push("Get vote count something failed!");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        error.push("Get report data something failed!");
+                    }
+                }
+            }
+
+
+            return res.status(200).json(responseEnd(error, warning, succ, data));
+        }
+        catch (err)
+        {
+            console.log("Get Report Of Topic Controller Error -> ");
+            console.error(err);
+
+
+            return res.status(500).json(responseEnd(error, warning, succ, data));
+        }
+    }
 };

@@ -191,4 +191,73 @@ module.exports = new class {
             return false;
         }
     }
+
+
+
+    async GetTopicReportData(topic_id, response_binding)
+    {
+        try
+        {
+            const response = await sequelize.query(`
+                SELECT *, vote_id FROM meeting_vote_histories WHERE vote_id IN (SELECT id FROM meeting_votes WHERE topic_id = :topic_id)
+            `, {
+                type: QueryTypes.SELECT,
+                replacements: {
+                    topic_id
+                }
+            });
+
+
+            if (response)
+            {
+                response_binding.value = response;
+            }
+
+            return true;
+        }
+        catch (err)
+        {
+            console.log("Get Topic Report Service Error ->");
+            console.error(err);
+
+            
+            return false;
+        }
+    }
+
+
+
+    async GetTopicVoteCount(topic_id, response_binding)
+    {
+        try
+        {
+            const response = (await sequelize.query(`
+                SELECT COUNT(id) as count FROM meeting_votes WHERE topic_id = :topic_id
+            `, {
+                type: QueryTypes.SELECT,
+                replacements: {
+                    topic_id
+                }
+            }))[0];
+
+
+            // console.log("Response => ");
+            // console.log(response);
+
+            if (response)
+            {
+                response_binding.value = response.count;
+            }
+
+            return true;
+        }
+        catch (err)
+        {
+            console.log("Get Topic Vote Count Service Error ->");
+            console.error(err);
+
+
+            return false;
+        }
+    }
 };

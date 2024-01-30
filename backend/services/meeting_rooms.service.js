@@ -4,17 +4,6 @@ const meeting_rooms_model = require('../models/meeting_room.model');
 
 
 module.exports = new class {
-    constructor()
-    {
-        console.log("Hello World!");
-
-
-        (async () => {
-            console.log((await this.GetRoomNameWithRoomId(1)));
-        })();
-    }
-
-
     async GetRoomNameWithRoomId(room_id)
     {
         try
@@ -86,6 +75,64 @@ module.exports = new class {
         catch (err)
         {
             console.log("Meeting Room Room Id Exists Service Error -> ");
+            console.error(err);
+
+
+            return false;
+        }
+    }
+
+
+
+    async CreateRoom(room_name)
+    {
+        try
+        {
+            await sequelize.query(`
+                INSERT INTO meeting_rooms(name) VALUES (:room_name)
+            `, {
+                type: QueryTypes.INSERT,
+                replacements: {
+                    room_name
+                }
+            });
+
+
+            return true;
+        }
+        catch (err)
+        {
+            console.log("Meeting Room Create Room Service Error ->");
+            console.error(err);
+
+
+            return false;
+        }
+    }
+
+
+
+    async IsSameRoomNameAlready(room_name, response_binding)
+    {
+        try
+        {
+            const response = (await sequelize.query(`
+                SELECT name FROM meeting_rooms WHERE name = :room_name
+            `, {
+                type: QueryTypes.SELECT,
+                replacements: {
+                    room_name
+                }
+            }));
+
+
+            response_binding.value = response.length === 1;
+
+            return true;
+        }
+        catch (err)
+        {
+            console.log("Meeting Rooms Is Same Name Already Service Error -> ");
             console.error(err);
 
 

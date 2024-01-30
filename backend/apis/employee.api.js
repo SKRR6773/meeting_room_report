@@ -95,4 +95,25 @@ module.exports = new class Employee {
             E_ImagePath, EmployeeCode, LocalFirstName, LocalLastName, E_IsActive
         };
     }
+
+
+    async AsyncEmployeeIsExistsWithEmployeeCode(empcode)
+    {
+        try
+        {
+            return await new Promise((resolve, reject) => {
+                this.CallBackGetEmployeeDetailsWithEmployeeCode(empcode, ({ status }) => {
+                    resolve(status);
+                });
+            });
+        }
+        catch (err)
+        {
+            console.log("Async Employee Is Exists With Employee Code Error -> ");
+            console.error(err);
+
+
+            return false;
+        }
+    }
 };

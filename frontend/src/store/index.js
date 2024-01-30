@@ -63,7 +63,7 @@ export default createStore({
                 method: "POST",
                 data: formData
             }).then((response) => {
-                my_modules.sweetAlertReport(response.data, () => {
+                my_modules.sweetAlertReport(response.data, (err_data) => {
                     // errors
 
                     Swal.fire({

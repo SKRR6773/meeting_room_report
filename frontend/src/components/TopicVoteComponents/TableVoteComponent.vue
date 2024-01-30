@@ -13,7 +13,7 @@
                                     <span class="input-group-text">ชื่อประชุม: </span>
                                     <input type="text" class="form-control" :value="props.meeting_name" disabled />
                                 </div>
-                                <div class="input-group">
+                                <div class="input-group" hidden>
                                     <span class="input-group-text">ชื่อห้องประชุม: </span>
                                     <input type="text" class="form-control" :value="props.meeting_room_name" disabled />
                                 </div>
@@ -73,6 +73,7 @@
     import { ref, reactive, defineProps, defineEmits, watch, computed, onMounted } from 'vue';
     import { useStore } from 'vuex';
     import gsap from 'gsap';
+    import my_modules from '@/lib/it_system_module';
 
 
     const props = defineProps({
@@ -112,7 +113,7 @@
     const Submit = (e) => 
     {
 
-        toggleSubmitButtonDisabledWithFormEl(e.target);
+        my_modules.toggleSubmitButtonDisabledWithFormEl(e.target);
 
         const _form = e.target;
         const result = radioEls.value.filter((row) => {
@@ -132,16 +133,11 @@
         return emits('submit', {
             form: _form,
             values: result,
-            cb_toggle_submit_disabled: () => toggleSubmitButtonDisabledWithFormEl(e.target)
+            cb_toggle_submit_disabled: () => my_modules.toggleSubmitButtonDisabledWithFormEl(e.target)
         });
     }
 
-    const toggleSubmitButtonDisabledWithFormEl = (formEl) => 
-    {
-        const _btnSubmit = formEl.querySelector('button[type=submit]');
-        _btnSubmit.querySelector('.spinner').classList.toggle("visually-hidden", _btnSubmit.disabled);
-        _btnSubmit.disabled = !_btnSubmit.disabled;
-    }
+    
 
     const SelectAllRowOfCol = (col) =>
     {
