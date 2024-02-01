@@ -9,5 +9,6 @@ route.post('/chk_empcode_can_create_topic', my_controller.EmployeeCanCreateTopic
 route.post('/get_all_room', my_controller.GetAllRoom);
 route.post('/create_topic', my_controller.CreateTopic);
 route.post('/get_report_of_topic', my_controller.GetReportOfTopic);
+route.post('/get_report_all_topics', my_controller.GetReportAllTopics);
 
 module.exports = route;

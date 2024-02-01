@@ -344,4 +344,27 @@ module.exports = new class {
             return res.status(500).json(responseEnd(error, warning, succ, data));
         }
     }
+
+
+
+
+
+    async GetReportAllTopics(req, res)
+    {
+        try
+        {
+            error = [];
+            warning = [];
+            data = [];
+            succ = [];
+
+
+
+            
+        }
+        catch (err)
+        {
+            return res.status(500).json(responseEnd(error, warning, succ, data));
+        }
+    }
 };

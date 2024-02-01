@@ -161,8 +161,9 @@ module.exports = new class {
             const response = await sequelize.query(`
                 SELECT id, name, 
                 (SELECT name FROM meeting_rooms WHERE id = meeting_topics.room_id) As room_name, 
-                details, people_count, (SELECT name FROM meeting_topic_statuses WHERE id = meeting_topics.status_id) As status_name, (SELECT COUNT(*) FROM meeting_votes WHERE topic_id = meeting_topics.id) As voted_count
-                FROM meeting_topics ORDER BY (CASE WHEN status_id = 2 THEN 0 ELSE 1 END) DESC LIMIT 10
+                details, people_count, (SELECT name FROM meeting_topic_statuses WHERE id = meeting_topics.status_id) As status_name, (SELECT COUNT(*) FROM meeting_votes WHERE topic_id = meeting_topics.id) As voted_count, 
+                UNIX_TIMESTAMP(createdAt) As created_unix_time
+                FROM meeting_topics ORDER BY (CASE WHEN status_id = 2 THEN 0 ELSE 1 END), id DESC LIMIT 10
             `, {
                 type: QueryTypes.SELECT
             });

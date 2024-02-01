@@ -1,6 +1,11 @@
 <template>
     <div>
         <div class="container mb-5">
+            <!-- header -->
+            <div class="container shadow p-0 rouned-5">
+                <HeaderPosterComponent :topicData.sync="topicData" />
+            </div>
+
             <!-- {{ topicData }} -->
             <div class="container shadow p-0" v-if="is_render_table_vote" ref="voteFormEl">
                 <TableVoteComponent 
@@ -37,6 +42,7 @@
     import TableVoteComponent from '../components/TopicVoteComponents/TableVoteComponent.vue';
     import VoteSummaryComponent from '../components/VoteSummaryComponent.vue';
     import { useStore } from 'vuex';
+    import HeaderPosterComponent from '@/components/HeaderPosterComponent.vue';
 
 
     const route = useRoute();

@@ -131,12 +131,12 @@ export default createStore({
         firstUpdateMeetingMetaData(state, cb)
         {
             this.commit('updateMeetingMetaData', (response_data) => {
-                state.meeting_meta_data = state.meeting_meta_data.map((row) => {
+                state.meeting_meta_data = moduleOfStore.SortByLatest(state.meeting_meta_data.map((row) => {
                     return {
                         ...row,
                         is_new: false
                     };
-                });
+                }));
                 
                 
                 cb(response_data);
@@ -175,16 +175,18 @@ export default createStore({
                 
                 return row;
             });
+
+            state.meeting_meta_data = moduleOfStore.SortByLatest(state.meeting_meta_data);
         },
         updateTopicVoted(state, topic_id) // set cookie
         {
             state.topics_id_voted.push(topic_id);
 
-            state.meeting_meta_data = state.meeting_meta_data.map((row) => {
+            state.meeting_meta_data = moduleOfStore.SortByLatest(state.meeting_meta_data.map((row) => {
                 row.status_name = state.topics_id_voted.includes(row.id) ? "voted" : row.status_name;
 
                 return row;
-            });
+            }));
 
             jsCookies.set("topics_id_voted", JSON.stringify(state.topics_id_voted));
         },

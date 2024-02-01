@@ -1,6 +1,6 @@
 <template>
     <div>
-        <form @submit.prevent="Submit" method="post">
+        <form @submit.prevent="Submit" method="post" ref="_form">
             <div class="container-fluid">
                 <!-- <p class="text-secondary" style="font-weight: 500;">แจ้งให้เราทราบคำถาม ข้อเสนอแนะ และข้อกังวลของคุณโดยกรอกแบบฟอร์ม</p> -->
                 <div class="row gy-3">
@@ -26,7 +26,7 @@
                     </div>
                     <div class="col-12">
                         <div class="form-floating">
-                            <textarea class="form-control" name="details" placeholder="รายละเอียด" style="height: 30vh;" required></textarea>
+                            <textarea class="form-control" name="details" placeholder="รายละเอียด" style="height: 30vh;" required @keydown="chkShortCut"></textarea>
                             <label for="floatingTextarea2">รายละเอียด</label>
                         </div>
                     </div>
@@ -34,7 +34,7 @@
                 <div class="d-flex mt-3">
                     <div class="ms-auto">
                         <button type="button" class="btn btn-secondary px-4 py-2 fw-bold rounded-1 me-1" @click.prevent="Cancel">ยกเลิก</button>
-                        <button type="submit" class="btn btn-primary px-4 py-2 fw-bold rounded-1">สร้าง</button>
+                        <button type="submit" class="btn btn-primary px-4 py-2 fw-bold rounded-1" ref="_submitBtn">สร้าง</button>
                     </div>
                 </div>
             </div>
@@ -42,9 +42,12 @@
     </div>
 </template>
 <script setup>
-    import { defineEmits } from 'vue';
+    import { ref, defineEmits } from 'vue';
 
     const emits = defineEmits(['submit', 'canceled']);
+
+    const _form = ref();
+    const _submitBtn = ref();
 
 
     const Submit = (e) => {
@@ -53,5 +56,14 @@
 
     const Cancel = (e) => {
         emits('canceled', e);
+    };
+
+
+    const chkShortCut = (e) => 
+    {
+        if (e.ctrlKey && e.key === "Enter")
+        {
+            _submitBtn.value.click();
+        }
     };
 </script>

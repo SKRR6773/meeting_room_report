@@ -1,19 +1,66 @@
 <template>
     <div>
         <div class="container px-3 py-3" v-if="is_render">
-            <header class="mb-3">
+            <header class="mb-4">
                 <div class="d-flex">
-                    <h1 class="mx-auto text-secondary header-title">รายงานสรุปผล</h1>
+                    <h1 class="mx-auto text-secondary header-title" style="text-decoration: underline;">รายงานสรุปผล</h1>
                 </div>
             </header>
             <section>
-                <ReportChartComponentVue :data.sync="reportData" />
+                <div class="body">
+                    <header>
+                        <div class="container-fluid">
+                            <div class="row gy-3">
+                                <div class="col-6 col-md-4 border border-0">
+                                    <div class="card shadow-custom">
+                                        <div class="card-body d-flex" style="flex-direction: column;">
+                                            <h1 class="mx-auto text-warning">{{ get_progress_simple_text }}</h1>
+                                            <h6 class="mx-auto text-secondary">จำนวนที่โหวต</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 border border-0">
+                                    <div class="card shadow-custom">
+                                        <div class="card-body d-flex" style="flex-direction: column;">
+                                            <h1 class="mx-auto text-warning">{{ get_progress_simple_text }}</h1>
+                                            <h6 class="mx-auto text-secondary">จำนวนที่โหวต</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 border border-0">
+                                    <div class="card shadow-custom">
+                                        <div class="card-body d-flex" style="flex-direction: column;">
+                                            <h1 class="mx-auto text-warning">{{ get_progress_simple_text }}</h1>
+                                            <h6 class="mx-auto text-secondary">จำนวนที่โหวต</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                    <section class="mt-4">
+                        <ReportChartComponentVue :data.sync="reportData" />
+                    </section>
+                </div>
+            </section>
+        </div>
+        
+        <div class="container">
+            <hr>
+        </div>
+        <!-- summary -->
+        <div class="container px-3 py-3">
+            <header class="mb-3">
+
+            </header>
+            <section>
             </section>
         </div>
     </div>
 </template>
 <script setup>
     import { ref, defineProps, computed, onMounted } from 'vue';
+    import { useStore } from 'vuex';
 
     import ReportChartComponentVue from './ReportChartComponent.vue';
     import axios from 'axios';
@@ -27,12 +74,20 @@
     });
 
 
+    const store = useStore();
 
     const is_render = ref(false);
     const reportData = ref([]);
 
     const meeting_topic_id = computed(() => {
         return props.meeting_topic_id;
+    });
+
+
+    const get_progress_simple_text = computed(() => {
+        return store.getters.getMeetingMetaData.filter((row) => {
+            return row.id === props.meeting_topic_id;
+        })[0].progress_simple_text;
     });
 
     const LoadReportData = () => 
@@ -57,12 +112,15 @@
             }, (succ_data) => {
                 // success...
 
-                reportData.value = Object.keys(succ_data.data.raw_data).map((row) => succ_data.data.raw_data[row]);
+                store.commit('updateMeetingMetaData', () => {
+                    reportData.value = Object.keys(succ_data.data.raw_data).map((row) => succ_data.data.raw_data[row]);
+    
+                    console.log("Report Data => ");
+                    console.log(reportData.value);
+    
+                    is_render.value = true;
+                });
 
-                console.log("Report Data => ");
-                console.log(reportData.value);
-
-                is_render.value = true;
             }, false, (warn_data) => {
                 // warning ...
             }, false, true);

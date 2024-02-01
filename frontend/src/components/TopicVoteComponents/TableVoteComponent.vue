@@ -2,9 +2,6 @@
     <div class="mt-3 bg-light">
         <div class="bg-light px-3 py-4">
             <header>
-                <div class="header d-flex mb-3">
-                    <h1 class="mx-auto text-secondary header-title">ประเมินความพึงพอใจ</h1>
-                </div>
                 <div class="d-flex justify-content-between mb-2">
                     <div class="container-fluid">
                         <div class="row">
@@ -41,7 +38,7 @@
                 </div>
             </header>
     
-            <form method="post" @submit.prevent="Submit">
+            <form method="post" @submit.prevent="Submit" ref="_formEl">
                 <div class="form-body">
                     <section>
                         <table class="table table-light table-bordered" style="position: relative;">
@@ -175,6 +172,7 @@
     const modalCreateMeeting = ref();
 
     const inputMeetingName = ref();
+    const _formEl = ref();
 
 
     // props computed
@@ -203,6 +201,7 @@
         if (response_data.status)
         {
             Modal.getOrCreateInstance(modalSelectMeeting.value).hide();
+            _formEl.value.reset();
         }
 
     }, topic_id: e});
@@ -233,6 +232,10 @@
                 // errors ...
             }, (succ_data) => {
                 // success ...
+
+                // clear form
+                console.log("Clear => ");
+                is_create.target.reset();
 
                 // console.log("Response Data => ");
                 store.commit('updateMeetingMetaData');
@@ -331,6 +334,9 @@
     });
 
     onMounted(() => {
+
+        my_modules.addFirstFocusInputWithModalDomEl(modalCreateMeeting.value);
+
         store.commit('updateSimpleQuestionData', function(data){
             console.log(data);
         });

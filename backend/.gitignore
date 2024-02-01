@@ -12,9 +12,6 @@ pids
 *.seed
 *.pid.lock
 
-# dotenv environment variable files
-.env
-
 # Output of 'npm pack'
 *.tgz
 

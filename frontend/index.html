@@ -27,7 +27,7 @@
 
           try
           {
-            // await navigator.clipboard.writeText(data_clipboard);
+            await navigator.clipboard.writeText(data_clipboard);
 
             // const url_obj = URL.createObjectURL(new Blob(["Hello 'World!"], { type: 'text/plain' }));
             // console.log(url_obj);
@@ -42,24 +42,24 @@
             // xhr.send();
 
 
-            const xhr = new XMLHttpRequest;
-            xhr.open("GET", "/api/public/images/test.jpg");
-            xhr.responseType = 'blob';
+            // const xhr = new XMLHttpRequest;
+            // xhr.open("GET", "/api/public/images/test.jpg");
+            // xhr.responseType = 'blob';
 
 
-            xhr.onload = async () =>
-            {
-              console.log("Response => ");
-              console.log(xhr.response);
-              await navigator.share({
-                title: "Hello World!",
-                text: "lorem",
-                url: "https://2e90-183-88-218-79.ngrok-free.app/topic/",
-                files: [new File([xhr.response], 'test.jpg', { type: 'image/jpeg' })]
-              });
-            }
+            // xhr.onload = async () =>
+            // {
+            //   console.log("Response => ");
+            //   console.log(xhr.response);
+            //   await navigator.share({
+            //     title: "Hello World!",
+            //     text: "lorem",
+            //     url: "https://2e90-183-88-218-79.ngrok-free.app/topic/",
+            //     files: [new File([xhr.response], 'test.jpg', { type: 'image/jpeg' })]
+            //   });
+            // }
 
-            xhr.send();
+            // xhr.send();
             
 
 
