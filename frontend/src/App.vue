@@ -12,6 +12,12 @@
                 </Transition>
             </router-view>
         </section>
+        <footer class="container mb-4">
+            <hr>
+            <section class="text-center text-secondary">
+                <h6>wiraphat@footer</h6>
+            </section>
+        </footer>
     </div>
 </template>
 <script setup>

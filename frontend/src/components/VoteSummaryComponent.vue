@@ -51,9 +51,12 @@
         <!-- summary -->
         <div class="container px-3 py-3">
             <header class="mb-3">
-
+                <div class="d-flex">
+                    <h1 class="mx-auto text-secondary header-title" style="text-decoration: underline;">รายงานสรุปผลทั้งหมด</h1>
+                </div>
             </header>
             <section>
+                <AllVoteSummaryComponent />
             </section>
         </div>
     </div>
@@ -65,6 +68,7 @@
     import ReportChartComponentVue from './ReportChartComponent.vue';
     import axios from 'axios';
     import my_modules from '@/lib/it_system_module';
+    import AllVoteSummaryComponent from './AllVoteSummaryComponent.vue';
 
 
     const props = defineProps({
@@ -111,12 +115,14 @@
                 // errors...
             }, (succ_data) => {
                 // success...
+                reportData.value = Object.keys(succ_data.data.raw_data).map((row) => succ_data.data.raw_data[row]);
 
                 store.commit('updateMeetingMetaData', () => {
-                    reportData.value = Object.keys(succ_data.data.raw_data).map((row) => succ_data.data.raw_data[row]);
-    
+                    
+
                     console.log("Report Data => ");
                     console.log(reportData.value);
+    
     
                     is_render.value = true;
                 });

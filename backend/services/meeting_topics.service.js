@@ -324,4 +324,64 @@ module.exports = new class {
             return false;
         }
     }
+
+
+
+    async GetAllTopicVotedCount(response_binding={})
+    {
+        try
+        {
+            const response = (await sequelize.query(`
+                SELECT COUNT(id)as count FROM meeting_votes
+            `, {
+                type: QueryTypes.SELECT
+            }))[0];
+
+
+            if (response)
+            {
+                response_binding.value = response.count;
+            }
+
+
+            return true;
+        }
+        catch (err)
+        {
+            console.log("Get All Topic Voted Count Service Error -> ");
+            console.error(err);
+
+
+            return false;
+        }
+    }
+
+
+    async GetAllTopicReportData(response_binding={})
+    {
+        try
+        {
+            const response = (await sequelize.query(`
+                SELECT question_id, SUM(score) as score FROM meeting_vote_histories  GROUP BY question_id
+            `, {
+                type: QueryTypes.SELECT
+            }));
+
+            if (response)
+            {
+                response_binding.value = response;
+            }
+
+
+            return true;
+        }
+        catch (err)
+        {
+            console.log("Get All Topic Report Data Service Error -> ");
+            console.error(err);
+
+
+            return false;
+        }
+    }
 };

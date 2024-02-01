@@ -359,8 +359,53 @@ module.exports = new class {
             succ = [];
 
 
+            let response_binding = {};
 
-            
+            if (!(await my_service.GetAllTopicVotedCount(response_binding)))
+            {
+                error.push("Get all voted count service failed! #1");
+            }
+            else
+            {
+                if (!response_binding.value)
+                {
+                    error.push("Get all voted count service failed! #2");
+                }
+                else
+                {
+                    const vote_count = response_binding.value;
+
+                    response_binding = {};
+
+
+                    if (!(await my_service.GetAllTopicReportData(response_binding)))
+                    {
+                        error.push("Get all topics report service failed! #2");
+                    }
+                    else
+                    {
+                        if (response_binding.value)
+                        {
+                            const vote_history_data = response_binding.value;
+
+
+                            data.push({
+                                raw_data: vote_history_data.reduce((curr, row) => {
+                                    curr[row.question_id] = row.score / vote_count;
+                                    return curr;
+                                }, {})
+                            })
+                        }
+                        else
+                        {
+                            error.push("Get all topics report service failed! #2");
+                        }
+                    }
+                }
+            }
+
+
+            return res.status(200).json(responseEnd(error, warning, succ, data));
         }
         catch (err)
         {
