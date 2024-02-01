@@ -139,4 +139,11 @@ module.exports = new class {
             return false;
         }
     }
+
+
+
+    GetNotSpecifiedRoomId()
+    {
+        return 1;
+    }
 };

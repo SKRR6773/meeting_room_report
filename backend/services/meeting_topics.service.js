@@ -17,6 +17,37 @@ module.exports = new class {
                 people_count
             });
 
+            console.log("Response Id => ");
+            console.log(response.id);
+
+            return true;
+        }
+        catch (err)
+        {
+            console.log("Meeting Topic Create Topic Service Error -> ");
+            console.error(err);
+
+
+            return false;
+        }
+    }
+
+    async CreateTopicBinding(name, room_id, details, people_count, bindingData={})
+    {
+        try
+        {
+            const response = await meeting_topic_modal.create({
+                name, 
+                room_id,
+                details,
+                people_count
+            });
+
+            if (response)
+            {
+                bindingData.value = response;
+            }
+
             return true;
         }
         catch (err)
@@ -100,6 +131,38 @@ module.exports = new class {
                 (SELECT name FROM meeting_rooms WHERE id = meeting_topics.room_id) As room_name, 
                 details, people_count, (SELECT name FROM meeting_topic_statuses WHERE id = meeting_topics.status_id) As status_name, (SELECT COUNT(*) FROM meeting_votes WHERE topic_id = meeting_topics.id) As voted_count
                 FROM meeting_topics
+            `, {
+                type: QueryTypes.SELECT
+            });
+
+            if (response)
+            {
+                bindingData.value = response;
+            }
+
+            return true;
+        }
+        catch (err)
+        {
+            console.log("meeeting topics Get All Topics Service Error -> ");
+            console.error(err);
+
+
+            return false;
+        }
+    }
+
+
+
+    async GetAllTopicsSorted(bindingData={})
+    {
+        try
+        {
+            const response = await sequelize.query(`
+                SELECT id, name, 
+                (SELECT name FROM meeting_rooms WHERE id = meeting_topics.room_id) As room_name, 
+                details, people_count, (SELECT name FROM meeting_topic_statuses WHERE id = meeting_topics.status_id) As status_name, (SELECT COUNT(*) FROM meeting_votes WHERE topic_id = meeting_topics.id) As voted_count
+                FROM meeting_topics ORDER BY (CASE WHEN status_id = 2 THEN 0 ELSE 1 END) DESC LIMIT 10
             `, {
                 type: QueryTypes.SELECT
             });

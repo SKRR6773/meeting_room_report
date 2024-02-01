@@ -1,25 +1,47 @@
 <template>
     <div>
-        <div class="container">
-            <div class="container shadow p-0">
-                <TableVoteComponent :meeting_topic_id="topicData.id" :meeting_name="topicData.name" :meeting_room_name="topicData.room_name" @submit="Submit" />
+        <div class="container mb-5">
+            <!-- {{ topicData }} -->
+            <div class="container shadow p-0" v-if="is_render_table_vote" ref="voteFormEl">
+                <TableVoteComponent 
+                    :meeting_topic_id.sync="topicData.id" 
+                    :meeting_name.sync="topicData.name"
+                    :meeting_room_name.sync="topicData.room_name" 
+                    :can_vote.sync="can_vote"
+                    @submit="Submit" 
+                    @topic-selected="ChangeTopic"
+                />
+            </div>
+
+
+            <!-- summary -->
+            <div class="container shadow p-0 mt-5" ref="votedSummaryEl">
+                <Transition>
+                    <div class="bg-light" v-if="is_show_summary">
+                        <VoteSummaryComponent :meeting_topic_id.sync="topicData.id" /> 
+                    </div>
+                </Transition>
             </div>
         </div>
     </div>
 </template>
 <script setup>
-    import { reactive, onMounted } from 'vue';
+    import { ref, reactive, onMounted } from 'vue';
     import { io } from 'socket.io-client';
     import { useRoute, useRouter } from 'vue-router';
     import axios from 'axios';
     import my_modules from '../lib/it_system_module';
     import Swal from 'sweetalert2';
+    import jsCookies from 'js-cookie';
 
     import TableVoteComponent from '../components/TopicVoteComponents/TableVoteComponent.vue';
+    import VoteSummaryComponent from '../components/VoteSummaryComponent.vue';
+    import { useStore } from 'vuex';
 
 
     const route = useRoute();
     const router = useRouter();
+    const store = useStore();
 
     const topicData = reactive({
         id: null,
@@ -32,17 +54,28 @@
         voted_count: 0
     });
 
+    const can_vote = ref(false);
+    const is_render_table_vote = ref(false);
+    const is_show_summary = ref(false);
+
+
+    const voteFormEl = ref();
+    const votedSummaryEl = ref();
+
+    const ChangeTopic = ({cb, topic_id}) => 
+    {
+        router.push({params: {
+            topic_id
+        }});
+
+        _LoadTopicDetailsWithTopicId(topic_id, cb);
+    }
 
     const Submit = (value) =>
     {
+        is_show_summary.value = false;
+
         const { form, values, cb_toggle_submit_disabled } = value;
-
-
-        console.log("Response => ");
-
-        console.log(form);
-        console.log(values);
-
         
         const formData = new FormData(form);
         formData.append('values', JSON.stringify(values));
@@ -57,8 +90,19 @@
             }, () => {
                 // success
                 cb_toggle_submit_disabled();
+                can_vote.value = false;
 
-                setTimeout(() => router.push(`/topic_review/${topicData.id}`), 500);
+                
+                is_show_summary.value = true;
+        
+                setTimeout(() => {
+                    votedSummaryEl.value.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }, 500);
+                // setTimeout(() => router.push(`/topic_review/${topicData.id}`), 500);
+
+                store.commit('updateTopicVoted', topicData.id);
             }, );
         }).catch((err) => {
             console.error(err);
@@ -69,13 +113,25 @@
 
     const UpdateTopicDetails = () => 
     {
-        _LoadTopicDetailsWithTopicId(route.params.topic_id);
+        if (route.params.topic_id)
+        {
+            // alert(route.params.topic_id);
+            _LoadTopicDetailsWithTopicId(route.params.topic_id);
+        }
+        else
+        {
+            is_render_table_vote.value = true;
+        }
     }
 
-    const _LoadTopicDetailsWithTopicId = (topic_id) => 
+    const _LoadTopicDetailsWithTopicId = (topic_id, cb=null) => 
     {
+        // is_render_table_vote.value = false;
+
+
         const formData = new FormData;
         formData.append("topic_id", topic_id);
+
 
 
         axios({
@@ -83,7 +139,13 @@
             method: "POST",
             data: formData
         }).then((response) => {
-            my_modules.sweetAlertReport(response.data, function(){
+            if (typeof cb === 'function')
+            {
+                cb(response.data);
+            }
+
+
+            my_modules.sweetAlertReport(response.data, () => {
                 // error ...
 
                 // topic is exists
@@ -112,10 +174,24 @@
                     })
                 }
 
-            }, function(data){
-                Object.keys(data.data).forEach((keyname) => {
-                    topicData[keyname] = data.data[keyname];
+            }, (data) => {
+                
+                let _data = {};
+                if (response.data.data.length)
+                {
+                    _data = response.data.data.splice(-1)[0];
+                }
+                
+                _data = response.data.data;
+                
+                Object.keys(_data).forEach((keyname) => {
+
+                    topicData[keyname] = _data[keyname];
                 });
+
+                can_vote.value = true;
+                is_render_table_vote.value = true;
+
             }, false, null, false, true);
         }).catch((err) => {
             console.error(err);
@@ -126,17 +202,32 @@
 
 
     onMounted(() => {
-        const socket = io(null, {
-            path: '/topic/' + route.params.topic_id.toString() 
-        });
+        // const socket = io(null, {
+        //     path: '/topic/' + route.params.topic_id.toString() 
+        // });
 
 
-        socket.on('connect', () => {
-            socket.emit('change_topic', route.params.topic_id.toString());
-        });
+        // socket.on('connect', () => {
+        //     socket.emit('change_topic', route.params.topic_id.toString());
+        // });
 
+        if (!jsCookies.get("topics_id_voted"))
+        {
+            store.commit("setTopicVoted", []);
+        }
 
         UpdateTopicDetails();
     });
     
 </script>
+<style scoped>
+    .v-enter-active,
+    .v-leave-active {
+        transition: opacity 0.5s ease;
+    }
+
+    .v-enter-from,
+    .v-leave-to {
+        opacity: 0;
+    }
+</style>

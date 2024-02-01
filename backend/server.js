@@ -31,6 +31,7 @@ app.use(fileUpload({
     tempFileDir: path.join(__dirname, "tmp"),
     limits: LIMIT_FILE_UPLOAD
 }));
+app.use('/public', express.static(path.join(__dirname, "public")));
 
 
 

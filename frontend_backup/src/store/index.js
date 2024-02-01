@@ -3,7 +3,6 @@ import axios from 'axios';
 import my_modules from "@/lib/it_system_module";
 import Swal from "sweetalert2";
 import moduleOfStore from './lib/module_of_store';
-import jsCookies from 'js-cookie';
 
 
 export default createStore({
@@ -14,10 +13,7 @@ export default createStore({
             simpleQuestionData: [],
             user_details: {},
             user_token: '',
-            meeting_room_data: [],
-
-            meeting_meta_data: [],
-            topics_id_voted: []
+            meeting_room_data: []
         };
     },
     mutations: {
@@ -127,75 +123,8 @@ export default createStore({
 
                 my_modules.callFunc(cb, false);
             });
-        },
-        firstUpdateMeetingMetaData(state, cb)
-        {
-            this.commit('updateMeetingMetaData', (response_data) => {
-                state.meeting_meta_data = state.meeting_meta_data.map((row) => {
-                    return {
-                        ...row,
-                        is_new: false
-                    };
-                });
-                
-                
-                cb(response_data);
-            });
-
-
-        },
-        updateMeetingMetaData(state, cb)
-        {
-            axios({
-                url: import.meta.env.VITE_VUE_API_URL + "/meeting_topic/get_all_topics",
-                method: 'POST'
-            }).then((response) => {
-                if (response.data.status)
-                {
-                    this.commit('setMeetingMetaData', response.data.data);
-                }
-
-                if (typeof cb === 'function')
-                {
-                    cb(response.data);
-                }
-            }).catch((err) => {
-                console.error(err);
-            });
-        },
-        setMeetingMetaData(state, value)
-        {
-            const _old_meeting_meta_data_id = state.meeting_meta_data.map((row) => row.id);
-            
-            state.meeting_meta_data = value.map((row) => {
-                
-                row.status_name = state.topics_id_voted.includes(row.id) ? "voted" : row.status_name;
-
-                row.is_new = !_old_meeting_meta_data_id.includes(row.id);
-                
-                return row;
-            });
-        },
-        updateTopicVoted(state, topic_id) // set cookie
-        {
-            state.topics_id_voted.push(topic_id);
-
-            state.meeting_meta_data = state.meeting_meta_data.map((row) => {
-                row.status_name = state.topics_id_voted.includes(row.id) ? "voted" : row.status_name;
-
-                return row;
-            });
-
-            jsCookies.set("topics_id_voted", JSON.stringify(state.topics_id_voted));
-        },
-        setTopicVoted(state, value)
-        {
-            state.topics_id_voted = value;
-
-            jsCookies.set("topics_id_voted", JSON.stringify(state.topics_id_voted));
         }
     },
-
     getters: {
         getAppName(state)
         {
@@ -220,10 +149,6 @@ export default createStore({
         getMeetingRoomData(state)
         {
             return state.meeting_room_data;
-        },
-        getMeetingMetaData(state)
-        {
-            return state.meeting_meta_data;
         }
     }
 });

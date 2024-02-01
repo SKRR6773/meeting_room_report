@@ -22,7 +22,7 @@ module.exports = new class {
 
             let response_binding = {};
 
-            if (!(await my_service.GetAllTopics(response_binding)))
+            if (!(await my_service.GetAllTopicsSorted(response_binding)))
             {
                 error.push("Service Get Topics Data Error!");
             }
@@ -30,6 +30,10 @@ module.exports = new class {
             {
                 if (response_binding.value)
                 {
+                    console.log("Response Binding => ");
+                    console.log(response_binding.value);
+
+
                     data.push(response_binding.value.map((row) => {
 
                         row.is_closed = row.voted_count >= row.people_count;
@@ -194,7 +198,7 @@ module.exports = new class {
             succ = [];
 
 
-            const { name, room_id, people_count, details } = req.body;
+            const { name, people_count, details } = req.body;
 
 
             if ((await my_service.IsTopicNameSameAlready(name)))
@@ -203,33 +207,32 @@ module.exports = new class {
             }
             
 
-            if (!(await meeting_rooms_service.RoomIdIsExists(room_id)))
+            const [metadata, _data] = tryParseInteget(people_count);
+
+
+            if (!metadata)
             {
-                error.push("ชื่อห้องประชุมที่คุณได้เลือกถูกลบไปแล้ว หรืออาจะะไม่มีอยู่จริง!");
+                error.push("จำนวนผู้เข้าร่วมประชุมต้องเป็นจำนวนเต็มเท่านั้น");
             }
             else
             {
-                const [metadata, _data] = tryParseInteget(people_count);
-
-
-                if (!metadata)
+                if (_data < 2)
                 {
-                    error.push("จำนวนผู้เข้าร่วมประชุมต้องเป็นจำนวนเต็มเท่านั้น");
-                }
-                else
-                {
-                    if (_data < 2)
-                    {
-                        warning.push("จำนวนผู้เข้าร่วมประชุมต้องควรมากกว่า 1คน ขึ้นไป");
-                    }
+                    warning.push("จำนวนผู้เข้าร่วมประชุมต้องควรมากกว่า 1คน ขึ้นไป");
                 }
             }
-
+        
 
             if (error.length === 0)
             {
-                if ((await my_service.CreateTopic(name, room_id, details, people_count)))
+                let response_binding = {};
+
+                // if ((await my_service.CreateTopic(name, room_id, details, people_count)))
+                if ((await my_service.CreateTopicBinding(name, meeting_rooms_service.GetNotSpecifiedRoomId(), details, people_count, response_binding)))
                 {
+                    data.push({
+                        topic_id: response_binding.value.id
+                    });
                     succ.push("Create Topic Successfully!");
                 }
                 else

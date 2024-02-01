@@ -123,7 +123,7 @@ for row in [
 
 for row in [
   {
-    "room": 'Room 101',
+    "room": 'Not specified',
   },
   {
     "room": 'Room 102',

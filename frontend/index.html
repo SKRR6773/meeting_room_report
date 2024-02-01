@@ -9,5 +9,80 @@
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
+    <script>
+      function copyTextIBGroup(e)
+      {
+        // console.log(e);
+      }
+
+      document.addEventListener('click', async (e) => {
+        const el = e.target;
+        if ((el.classList.contains("input-btn-copy")) && (el.getAttribute('onclick') === "copyTextIBGroup"))
+        {
+          const old_innerHTML = el.innerHTML;
+          const data_clipboard = el.getAttribute("data-clipboard-text");
+
+          console.log("Data Copy => ");
+          console.log(data_clipboard);
+
+          try
+          {
+            // await navigator.clipboard.writeText(data_clipboard);
+
+            // const url_obj = URL.createObjectURL(new Blob(["Hello 'World!"], { type: 'text/plain' }));
+            // console.log(url_obj);
+            // const xhr = new XMLHttpRequest;
+            // xhr.open('GET', url_obj);
+            // xhr.responseType = 'blob';
+            // xhr.onload = () => 
+            // {
+            //   console.log("Response => ");
+            //   console.log(xhr.response);
+            // }
+            // xhr.send();
+
+
+            const xhr = new XMLHttpRequest;
+            xhr.open("GET", "/api/public/images/test.jpg");
+            xhr.responseType = 'blob';
+
+
+            xhr.onload = async () =>
+            {
+              console.log("Response => ");
+              console.log(xhr.response);
+              await navigator.share({
+                title: "Hello World!",
+                text: "lorem",
+                url: "https://2e90-183-88-218-79.ngrok-free.app/topic/",
+                files: [new File([xhr.response], 'test.jpg', { type: 'image/jpeg' })]
+              });
+            }
+
+            xhr.send();
+            
+
+
+
+
+            el.disabled = true;
+
+          }
+          catch (err)
+          {
+            console.error(err);
+
+            alert("ไม่สามารถ copy ได้สำเร็จ โปรดเช็ค protocol ปัจจุบัน หรือเช็ค permission (dev envionment not support)");
+          }
+          
+          el.innerHTML = "copied!";
+          
+          setTimeout(() => {
+            el.innerHTML = old_innerHTML;
+            el.disabled = false;
+          }, 3000);
+        }
+      });
+    </script>
   </body>
 </html>
