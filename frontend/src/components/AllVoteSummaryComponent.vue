@@ -6,12 +6,14 @@
     </div>
 </template>
 <script setup>
-    import { ref, onMounted } from 'vue';
+    import { ref, defineEmits, onMounted } from 'vue';
     import axios from 'axios';
     import my_modules from '../lib/it_system_module';
 
     import ReportChartComponent from './ReportChartComponent.vue';
 
+
+    const emits = defineEmits(['update_all_topics_score_persen']);
 
     const is_render = ref(false);
 
@@ -47,6 +49,9 @@
                 // const value = Object.values();
                 reportData.value = value;
                 is_render.value = true;
+
+
+                emits('update_all_topics_score_persen', my_modules.calculatePercentage(5, reportData.value));
 
             }, false, (warn_data) => {
                 // warnning ...
