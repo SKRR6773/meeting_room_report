@@ -12,34 +12,11 @@
                         <!-- <pre> -->
                             
                         <!-- </pre> -->
-                        <div class="container-fluid">
-                            <div class="row gy-3">
-                                <div class="col-6 col-lg-4 border border-0">
-                                    <div class="card shadow-custom h-100">
-                                        <div class="card-body d-flex" style="flex-direction: column;">
-                                            <h1 class="mx-auto text-warning">{{ get_progress_simple_text }}</h1>
-                                            <h6 class="mx-auto text-secondary" align="center">จำนวนที่โหวต (คน)</h6>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6 col-lg-4 border border-0">
-                                    <div class="card shadow-custom h-100">
-                                        <div class="card-body d-flex" style="flex-direction: column;">
-                                            <h1 class="mx-auto text-success">{{ this_topic_score_persen.toFixed(2) }}%</h1>
-                                            <h6 class="mx-auto text-secondary" align="center">ค่าเฉลี่ยคะแนนโหวต</h6>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-lg-4 border border-0">
-                                    <div class="card shadow-custom h-100">
-                                        <div class="card-body d-flex" style="flex-direction: column;">
-                                            <h1 class="mx-auto text-info">{{ all_topics_score_persen.toFixed(2) }}%</h1>
-                                            <h6 class="mx-auto text-secondary" align="center">ค่าเฉลี่ยคะแนนโหวตทั้งหมด</h6>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <HeaderInfomationCardComponent 
+                            :progress_simple_text.sync="get_progress_simple_text" 
+                            :this_topic_score_persen.sync="this_topic_score_persen" 
+                            :all_topics_score_persen.sync="all_topics_score_persen" 
+                        />
                     </header>
                     <section class="mt-4">
                         <ReportChartComponentVue :data.sync="reportData" />
@@ -72,6 +49,7 @@
     import axios from 'axios';
     import my_modules from '@/lib/it_system_module';
     import AllVoteSummaryComponent from './AllVoteSummaryComponent.vue';
+    import HeaderInfomationCardComponent from './HeaderInfomationCardComponent.vue';
 
 
     const props = defineProps({

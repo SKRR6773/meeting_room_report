@@ -15,6 +15,11 @@
         // console.log(e);
       }
 
+      const shareQrCodeIBGroup = (e) =>
+      {
+
+      }
+
       document.addEventListener('click', async (e) => {
         const el = e.target;
         if ((el.classList.contains("input-btn-copy")) && (el.getAttribute('onclick') === "copyTextIBGroup"))
@@ -81,6 +86,33 @@
             el.innerHTML = old_innerHTML;
             el.disabled = false;
           }, 3000);
+        }
+
+
+        else if (el.classList.contains("input-btn-share") && el.getAttribute("onclick") === "shareQrCodeIBGroup")
+        {
+          console.log("El => ");
+          console.log(el);
+
+          const share_url = el.getAttribute('data-share-url');
+
+          console.log(share_url);
+
+          const xhr = new XMLHttpRequest;
+          xhr.open("GET", share_url);
+          xhr.responseType = 'blob';
+
+          xhr.onload = async () => 
+          {
+            const response = await navigator.share({
+              files: [new File([xhr.response], 'qrcode.jpg', { type: 'image/jpeg' })]
+            });
+
+            console.log("Response Share => ");
+            console.log(response);
+          }
+
+          xhr.send();
         }
       });
     </script>
