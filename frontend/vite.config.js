@@ -28,5 +28,6 @@ export default defineConfig({
         secure: false
       }
     }
-  }
-})
+  },
+  base: process.env.NODE_ENV === 'production' ? '/assetment_comunication/frontend/' : '/',
+});
