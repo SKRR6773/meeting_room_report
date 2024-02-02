@@ -94,7 +94,10 @@ module.exports = new class {
                 {
                     if (response_binding.value)
                     {
-                        data.push(response_binding.value[0]);
+                        let value = response_binding.value[0];
+                        value.is_closed = value.voted_count >= value.people_count; 
+
+                        data.push(value);
                         succ.push("get topic details successfully!");
                     }
                     else

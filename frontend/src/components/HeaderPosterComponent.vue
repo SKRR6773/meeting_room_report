@@ -13,7 +13,8 @@
                         <h5>รหัสประชุม: {{ topicData.id }}</h5>
                         <h5>ชื่อประชุม: {{ topicData.name }}</h5>
                         <h5>รายละเอียด: {{ topicData.details }}</h5>
-                        <h5>จำนวนผู้เข้าร่วม: {{ topicData.people_count }}</h5>
+                        <h5>จำนวนผู้เข้าร่วม: {{ topicData.people_count }} คน</h5>
+                        <h5>โหวตไปแล้ว: {{ topicData.voted_count }} คน</h5>
                     </section>
                 </div>
             </div>

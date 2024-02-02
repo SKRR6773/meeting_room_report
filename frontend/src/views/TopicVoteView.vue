@@ -13,6 +13,7 @@
                     :meeting_name.sync="topicData.name"
                     :meeting_room_name.sync="topicData.room_name" 
                     :can_vote.sync="can_vote"
+                    :is_closed.sync="topicData.is_closed"
                     @submit="Submit" 
                     @topic-selected="ChangeTopic"
                 />
@@ -57,7 +58,8 @@
         people_count: 0,
         status_name: null,
         createdAt: null,
-        voted_count: 0
+        voted_count: 0,
+        is_closed: false
     });
 
     const can_vote = ref(false);

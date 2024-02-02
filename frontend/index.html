@@ -106,10 +106,11 @@
           {
             const response = await navigator.share({
               files: [new File([xhr.response], 'qrcode.jpg', { type: 'image/jpeg' })]
+            }).then((value) => {
+              console.log("Response Share => ");
+              console.log(value);
             });
 
-            console.log("Response Share => ");
-            console.log(response);
           }
 
           xhr.send();

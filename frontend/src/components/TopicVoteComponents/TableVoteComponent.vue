@@ -128,6 +128,8 @@
             </div>
         </div>
 
+        <!-- {{ props.is_closed }} -->
+
     </div>
 </template>
 <script setup>
@@ -154,6 +156,9 @@
             type: String
         },
         can_vote: {
+            type: Boolean
+        },
+        is_closed: {
             type: Boolean
         }
     });
