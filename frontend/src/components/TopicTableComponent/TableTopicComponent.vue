@@ -11,6 +11,9 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <tr v-if="_data.length === 0">
+                        <td colspan="4" align="center">ไม่มีห้องประชุม</td>
+                    </tr>
                     <tr v-for="(row, index) in _data" :key="index">
                         <td>{{ index + 1 }}</td>
                         <td>{{ row.name }}</td>

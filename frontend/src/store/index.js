@@ -172,7 +172,15 @@ export default createStore({
                 row.status_name = state.topics_id_voted.includes(row.id) ? "voted" : row.status_name;
 
                 row.is_new = !_old_meeting_meta_data_id.includes(row.id);
+
+                console.log("Row => ");
+                console.log(row);
                 
+                return row;
+            })
+            // middleware
+            .map((row) => {
+                row.can_vote = !["voted"].includes(row.status_name);
                 return row;
             });
 

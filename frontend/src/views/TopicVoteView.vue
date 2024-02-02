@@ -59,7 +59,7 @@
         status_name: null,
         createdAt: null,
         voted_count: 0,
-        is_closed: false
+        is_closed: false,
     });
 
     const can_vote = ref(false);
@@ -172,8 +172,10 @@
                         if (result.isConfirmed)
                         {
                             router.push({
-                                path: '/topics'
+                                path: '/topic'
                             });
+
+                            setTimeout(() => UpdateTopicDetails(), 300);
                         }
                         else
                         {
@@ -222,6 +224,23 @@
         if (!jsCookies.get("topics_id_voted"))
         {
             store.commit("setTopicVoted", []);
+        }
+        else
+        {
+            try
+            {
+                console.log("Cookies => ");
+                console.log(jsCookies.get("topics_id_voted"));
+    
+                store.commit("setTopicVoted", JSON.parse(jsCookies.get("topics_id_voted")));
+            }
+            catch (err)
+            {
+                console.error(err);
+                
+                jsCookies.set('topics_id_voted', "[]");
+                store.commit("setTopicVoted", JSON.parse(jsCookies.get("topics_id_voted")));
+            }
         }
 
         UpdateTopicDetails();

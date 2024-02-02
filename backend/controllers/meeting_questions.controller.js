@@ -18,6 +18,9 @@ module.exports = new class {
             data = [];
 
 
+            // console.log("Request => ");
+            // console.log(req.socket_io.io.emit("message", "Hello"));
+
             let response_binding = {};
 
 

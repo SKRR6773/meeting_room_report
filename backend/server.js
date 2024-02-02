@@ -5,6 +5,14 @@ const fileUpload = require('express-fileupload');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
+const fs = require('fs');
+const { QueryTypes } = require('sequelize');
+const { confirm } = require('@inquirer/prompts');
+
+// middleware
+const socket_io_mid = require('./middleware/socket.middleware');
+
+
 
 const app = express();
 
@@ -48,7 +56,7 @@ const userRoleRouting = require('./routes/user_role.route');
 
 // routing . use
 app.use('/debug', debugRouting);
-app.use('/meeting_question', meetingQuestionRouting);
+app.use('/meeting_question', socket_io_mid(io), meetingQuestionRouting);
 app.use('/meeting_hooks', meetingHooksRouting);
 app.use('/meeting_topic', meetingTopicRouting);
 app.use('/meeting_votes', meetingVotesRouting);
@@ -63,13 +71,66 @@ new SocketServe(io);
 
 
 
-require('./models/sync').sync({alter: true, force: false}).then(() => {
+const conf_content = JSON.parse(fs.readFileSync(path.join(__dirname, "/data/first.json"), {
+    encoding: "utf-8"
+}));
 
-    server.listen(PORT, IP, () => {
-        console.log(`Listener Server on ${IP}:${PORT}`);
+
+
+
+const main = () =>
+{
+    require('./models/sync').sync({alter: true, force: conf_content.is_first}).then(async () => {
+        if (conf_content.is_first)
+        {
+            try
+            {
+                Promise.all(fs.readFileSync(path.join(__dirname, "/data/first.sql"), {
+                    encoding: 'utf-8'
+                }).split('\n').map(async (row) => {
+                    return await require('./models/config').sequelize.query(
+                        row  
+                    , {
+                        type: QueryTypes.INSERT
+                    });
+                }));
+    
+                conf_content.is_first = false;
+    
+                fs.writeFileSync(path.join(__dirname, "/data/first.json"), JSON.stringify(conf_content, null, 4), {
+                    encoding: 'utf-8'
+                });
+            }
+            catch (err)
+            {
+                console.error(err);
+            }
+        }
+    
+        server.listen(PORT, IP, () => {
+            console.log(`Listener Server on ${IP}:${PORT}`);
+        });
+    
+    }).catch((err) => {
+        console.error(err);
+        process.exit(0);
     });
+}
 
-}).catch((err) => {
-    console.error(err);
-    process.exit(0);
-});
+if (conf_content.is_first)
+{
+    console.log("This is an actual run on production, the first time will be a force run, **WARNING, you will not be able to roll back after the run has started.");
+    confirm({
+        message: " if you press y for DELETE ALL DATA and n for stop."
+    }).then((value) => {
+    
+        if (value)
+        {
+            main();
+        }
+    });
+}
+else
+{
+    main();
+}
