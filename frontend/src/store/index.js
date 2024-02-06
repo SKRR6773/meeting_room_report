@@ -11,6 +11,7 @@ export default createStore({
     {
         return {
             appName: "Meeting Report App",
+            envMode: "dev",
             simpleQuestionData: [],
             user_details: {},
             user_token: '',
@@ -45,6 +46,10 @@ export default createStore({
                     cb(false);
                 }
             });
+        },
+        setEnvMode(state, value)
+        {
+            state.envMode = value;
         },
         updateUserDetails(state, value)
         {
@@ -168,13 +173,8 @@ export default createStore({
             const _old_meeting_meta_data_id = state.meeting_meta_data.map((row) => row.id);
             
             state.meeting_meta_data = value.map((row) => {
-                
                 row.status_name = state.topics_id_voted.includes(row.id) ? "voted" : row.status_name;
-
                 row.is_new = !_old_meeting_meta_data_id.includes(row.id);
-
-                console.log("Row => ");
-                console.log(row);
                 
                 return row;
             })
@@ -234,6 +234,14 @@ export default createStore({
         getMeetingMetaData(state)
         {
             return state.meeting_meta_data;
+        },
+        getEnvMode(state)
+        {
+            return state.envMode;
+        },
+        isProductionMode(state)
+        {
+            return state.envMode === 'production';
         }
     }
 });

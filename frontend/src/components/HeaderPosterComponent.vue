@@ -5,16 +5,23 @@
                 <div class="d-flex px-3" style="justify-content: space-between; flex-direction: column; height: 100%;">
                     <header class="py-3 mb-auto">
                         <div class="header d-flex mb-3">
-                            <h1 class="mx-auto text-light header-title" align="center">แบบประเมินการสื่อสารและความร่วมมือ</h1>
+                            <h2 class="mx-auto text-light header-title fw-bold" align="center">แบบประเมินการสื่อสารและความร่วมมือ</h2>
                         </div>
                     </header>
-                    <section class="mt-auto">
+                    <section class="mt-auto d-flex" style="justify-content: space-between;">
                         <!-- {{ topicData }} -->
-                        <h5>รหัสประชุม: {{ topicData.id }}</h5>
-                        <h5>ชื่อประชุม: {{ topicData.name }}</h5>
-                        <h5>รายละเอียด: {{ topicData.details }}</h5>
-                        <h5>จำนวนผู้เข้าร่วม: {{ topicData.people_count }} คน</h5>
-                        <h5>โหวตไปแล้ว: {{ topicData.voted_count }} คน</h5>
+                        <div class="left">
+                            <h6>รหัสประชุม: {{ topicData.id }}</h6>
+                            <h6>ชื่อประชุม: {{ topicData.name }}</h6>
+                            <h6>รายละเอียด: {{ topicData.details }}</h6>
+                            <h6>จำนวนผู้เข้าร่วม: {{ topicData.people_count }} คน</h6>
+                            <h6>โหวตไปแล้ว: {{ topicData.voted_count }} คน</h6>
+                        </div>
+                        <div class="right d-flex">
+                            <h3 class="mt-auto fw-bold">
+                                {{ get_total_score }}/50 คะแนน
+                            </h3>
+                        </div>
                     </section>
                 </div>
             </div>
@@ -30,9 +37,14 @@
     const props = defineProps({
         topicData: {
             type: Object
+        },
+        totalScore: {
+            type: Number
         }
     });
 
+
+    const get_total_score = computed(() => props.totalScore);
 
 
     const topicData = computed(() => props.topicData);

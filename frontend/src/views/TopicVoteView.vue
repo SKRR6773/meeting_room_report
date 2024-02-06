@@ -3,7 +3,7 @@
         <div class="container mb-5">
             <!-- header -->
             <div class="container shadow p-0 rouned-5">
-                <HeaderPosterComponent :topicData.sync="topicData" />
+                <HeaderPosterComponent :topicData.sync="topicData" :totalScore.sync="totalScore" />
             </div>
 
             <!-- {{ topicData }} -->
@@ -16,6 +16,7 @@
                     :is_closed.sync="topicData.is_closed"
                     @submit="Submit" 
                     @topic-selected="ChangeTopic"
+                    @score-update="ScoreUpdate"
                 />
             </div>
 
@@ -65,6 +66,7 @@
     const can_vote = ref(false);
     const is_render_table_vote = ref(false);
     const is_show_summary = ref(false);
+    const totalScore = ref(0);
 
 
     const voteFormEl = ref();
@@ -77,6 +79,11 @@
         }});
 
         _LoadTopicDetailsWithTopicId(topic_id, cb);
+    }
+
+    const ScoreUpdate = (value) => 
+    {
+        totalScore.value = value;
     }
 
     const Submit = (value) =>

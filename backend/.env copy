@@ -1,6 +1,0 @@
-IP=localhost
-PORT=8000
-DB_HOST=localhost
-DB_USER=wirapat
-DB_PASS=d997692a4fbc
-DB_NAME=meeting_room_report

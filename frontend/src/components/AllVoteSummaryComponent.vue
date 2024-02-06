@@ -13,7 +13,7 @@
     import ReportChartComponent from './ReportChartComponent.vue';
 
 
-    const emits = defineEmits(['update_all_topics_score_persen']);
+    const emits = defineEmits(['update_all_topics_score_persen', 'report_rendered']);
 
     const is_render = ref(false);
 
@@ -36,27 +36,23 @@
 
             my_modules.sweetAlertReport(response.data, (err_data) => {
                 // errors ...
+                emits('report_rendered', false);
             }, (succ_data) => {
                 // success ...
-
-                // console.log("Succ Data => ");
-                // console.log(succ_data.data);
                 const value = Object.keys(succ_data.data.raw_data).map((row) => succ_data.data.raw_data[row]);
-                // console.log(value);
-
-                // let raw_data_assign = Object.assign({}, succ_data.data.raw_data);
-
-                // const value = Object.values();
                 reportData.value = value;
                 is_render.value = true;
 
 
                 emits('update_all_topics_score_persen', my_modules.calculatePercentage(5, reportData.value));
-
+                emits('report_rendered', true);
+                
             }, false, (warn_data) => {
                 // warnning ...
+                emits('report_rendered', false);
             }, false, true);
         }).catch((err) => {
+            emits('report_rendered', false);
             console.error(err);
         });
     }

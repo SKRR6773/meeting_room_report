@@ -7,7 +7,7 @@
             </div>
         </header> -->
         <section>
-            <div style="min-height: 60vh;">
+            <div :style="{'min-height': props.minHeight.toString() + 'vh'}">
                 <Bar :data="data" :options="options" />
             </div>
         </section>
@@ -33,6 +33,10 @@
     const props = defineProps({
         data: {
             type: Array
+        },
+        minHeight: {
+            type: String,
+            default: '60'
         }
     });
     const store = useStore();

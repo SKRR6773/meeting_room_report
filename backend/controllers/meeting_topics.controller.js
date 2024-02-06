@@ -2,6 +2,7 @@ const my_service = require('../services/meeting_topics.service');
 const { responseEnd, tryParseInteget } = require('../lib/modules');
 const user_roles_service = require('../services/user_role.service');
 const meeting_rooms_service = require('../services/meeting_rooms.service');
+const response_mid = require('../middleware/response.middleware');
 
 
 let error = [];
@@ -270,10 +271,12 @@ module.exports = new class {
 
             const { topic_id } = req.body;
 
+            console.log("Doing...");
+
 
             if (!(await my_service.TopicIdIsExists(topic_id)))
             {
-                error.push("Topic not found!");
+                req.error.push("Topic not found!");
             }
             else
             {
@@ -282,7 +285,7 @@ module.exports = new class {
 
                 if (!(await my_service.GetTopicReportData(topic_id, response_binding)))
                 {
-                    error.push("Get report data service Error!");
+                    req.error.push("Get report data service Error!");
                 }
                 else
                 {
@@ -295,7 +298,7 @@ module.exports = new class {
                         
                         if (!(await my_service.GetTopicVoteCount(topic_id, response_binding)))
                         {
-                            error.push("Get vote count service error");
+                            req.error.push("Get vote count service error");
                         }
                         else
                         {
@@ -304,7 +307,7 @@ module.exports = new class {
                                 const vote_count = response_binding.value;
                                 
                                 
-                                data.push({
+                                req.data.push({
                                     raw_data: vote_history_data.reduce((curr, row, index) => {
                                         if (!(row.question_id in curr))
                                         {
@@ -316,27 +319,27 @@ module.exports = new class {
                                         return curr;
                                     }, {})   
                                 });
-                                succ.push("Get report data successfully!");
+                                req.succ.push("Get report data successfully!");
                             }
                             else if (response_binding.value === 0)
                             {
-                                error.push("การประชุมนี้ไม่มีการโหวตใดๆ");
+                                req.error.push("การประชุมนี้ไม่มีการโหวตใดๆ");
                             }
                             else
                             {
-                                error.push("Get vote count something failed!");
+                                req.error.push("Get vote count something failed!");
                             }
                         }
                     }
                     else
                     {
-                        error.push("Get report data something failed!");
+                        req.error.push("Get report data something failed!");
                     }
                 }
             }
 
 
-            return res.status(200).json(responseEnd(error, warning, succ, data));
+            return response_mid(200)(req, res);
         }
         catch (err)
         {
@@ -344,7 +347,7 @@ module.exports = new class {
             console.error(err);
 
 
-            return res.status(500).json(responseEnd(error, warning, succ, data));
+            return response_mid(500)(req, res);
         }
     }
 

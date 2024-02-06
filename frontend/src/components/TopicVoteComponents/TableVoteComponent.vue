@@ -28,7 +28,7 @@
                             </div>
                             <div class="col-12 col-md-6">
                                 <div class="d-flex">
-                                    <h3 class="ms-auto mt-auto"> 
+                                    <h3 class="ms-auto mt-auto" style="opacity: 0;" hidden> 
                                         {{ tweened.number.toFixed(0) }}/{{ totalScore }} คะแนน
                                     </h3>
                                 </div>
@@ -39,7 +39,10 @@
             </header>
     
             <form method="post" @submit.prevent="Submit" ref="_formEl">
-                <div class="form-body">
+                <div class="form-body" style="position: relative;">
+                    <div class="overlay d-flex" v-if="!$route.params.topic_id" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; background: rgba(0, 0, 0, .7);">
+                        <h3 class="text-light mx-auto my-auto">กรุณาเลือกประชุมก่อนที่จะโหวต</h3>
+                    </div>
                     <section>
                         <table class="table table-light table-bordered" style="position: relative;">
                             <thead style="position: sticky; top: 0;">
@@ -58,11 +61,36 @@
                             <tbody ref="tbodyEl">
                                 <tr v-for="(row, index) in getSimpleQuestions" :key="index">
                                     <td>{{ (index + 1).toString() }} {{ ').' }} {{ row.question_text }}</td>
-                                    <td class="text-center" @click="tdClickOnRadioFrame"><input type="radio" :name="'radio_' + index.toString()" class="form-check-input fs-5" :data-question-id="row.id" :data-score="1" :value="row.id" @click="checkUpScore" ref="radioEls" required :disabled="!can_vote" /></td>
-                                    <td class="text-center" @click="tdClickOnRadioFrame"><input type="radio" :name="'radio_' + index.toString()" class="form-check-input fs-5" :data-question-id="row.id" :data-score="2" :value="row.id" @click="checkUpScore" ref="radioEls" required :disabled="!can_vote" /></td>
-                                    <td class="text-center" @click="tdClickOnRadioFrame"><input type="radio" :name="'radio_' + index.toString()" class="form-check-input fs-5" :data-question-id="row.id" :data-score="3" :value="row.id" @click="checkUpScore" ref="radioEls" required :disabled="!can_vote" /></td>
-                                    <td class="text-center" @click="tdClickOnRadioFrame"><input type="radio" :name="'radio_' + index.toString()" class="form-check-input fs-5" :data-question-id="row.id" :data-score="4" :value="row.id" @click="checkUpScore" ref="radioEls" required :disabled="!can_vote" /></td>
-                                    <td class="text-center" @click="tdClickOnRadioFrame"><input type="radio" :name="'radio_' + index.toString()" class="form-check-input fs-5" :data-question-id="row.id" :data-score="5" :value="row.id" @click="checkUpScore" ref="radioEls" required :disabled="!can_vote" /></td>
+                                    <td class="h-100" style="position: relative;" @click="tdClickOnRadioFrame">
+                                        <div class="my-auto h-100 d-flex align-items-center" style="position: absolute; left: 50%; transform: translate(-50%, -25%);">
+                                            <input type="radio" :name="'radio_' + index.toString()" class="form-check-input fs-5" :data-question-id="row.id" :data-score="1" :value="row.id" @click="checkUpScore" ref="radioEls" required :disabled="!can_vote" />
+                                        </div>
+                                        <input type="radio" style="opacity: 0; z-index: -1;" class="form-check-input fs-5 d-none" :value="row.id" />
+                                    </td>
+                                    <td class="h-100" style="position: relative;" @click="tdClickOnRadioFrame">
+                                        <div class="my-auto h-100 d-flex align-items-center" style="position: absolute; left: 50%; transform: translate(-50%, -25%);">
+                                            <input type="radio" :name="'radio_' + index.toString()" class="form-check-input fs-5" :data-question-id="row.id" :data-score="2" :value="row.id" @click="checkUpScore" ref="radioEls" required :disabled="!can_vote" />
+                                        </div>
+                                        <input type="radio" style="opacity: 0; z-index: -1;" class="form-check-input fs-5 d-none" :value="row.id" />
+                                    </td>
+                                    <td class="h-100" style="position: relative;" @click="tdClickOnRadioFrame">
+                                        <div class="my-auto h-100 d-flex align-items-center" style="position: absolute; left: 50%; transform: translate(-50%, -25%);">
+                                            <input type="radio" :name="'radio_' + index.toString()" class="form-check-input fs-5" :data-question-id="row.id" :data-score="3" :value="row.id" @click="checkUpScore" ref="radioEls" required :disabled="!can_vote" />
+                                        </div>
+                                        <input type="radio" style="opacity: 0; z-index: -1;" class="form-check-input fs-5 d-none" :value="row.id" />
+                                    </td>
+                                    <td class="h-100" style="position: relative;" @click="tdClickOnRadioFrame">
+                                        <div class="my-auto h-100 d-flex align-items-center" style="position: absolute; left: 50%; transform: translate(-50%, -25%);">
+                                            <input type="radio" :name="'radio_' + index.toString()" class="form-check-input fs-5" :data-question-id="row.id" :data-score="4" :value="row.id" @click="checkUpScore" ref="radioEls" required :disabled="!can_vote" />
+                                        </div>
+                                        <input type="radio" style="opacity: 0; z-index: -1;" class="form-check-input fs-5 d-none" :value="row.id" />
+                                    </td>
+                                    <td class="h-100" style="position: relative;" @click="tdClickOnRadioFrame">
+                                        <div class="my-auto h-100 d-flex align-items-center" style="position: absolute; left: 50%; transform: translate(-50%, -25%);">
+                                            <input type="radio" :name="'radio_' + index.toString()" class="form-check-input fs-5" :data-question-id="row.id" :data-score="5" :value="row.id" @click="checkUpScore" ref="radioEls" required :disabled="!can_vote" />
+                                        </div>
+                                        <input type="radio" style="opacity: 0; z-index: -1;" class="form-check-input fs-5 d-none" :value="row.id" />
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -74,7 +102,7 @@
                     </section>
                     <footer class="d-flex">
                         <div class="ms-auto">
-                            <button type="reset" class="btn btn-secondary me-1" :disabled="!can_vote">ล้างค่า</button>
+                            <button type="reset" class="btn btn-secondary me-1" :disabled="!can_vote" @click="ResetForm">ล้างค่า</button>
                             <button type="submit" class="btn btn-primary ms-auto" autofocus :disabled="!can_vote">
                                 <span class="spinner-grow spinner-grow-sm spinner visually-hidden"></span>
                                 ส่งแบบฟอร์ม
@@ -127,7 +155,6 @@
                 </div>
             </div>
         </div>
-
         <!-- {{ props.is_closed }} -->
 
     </div>
@@ -162,7 +189,7 @@
             type: Boolean
         }
     });
-    const emits = defineEmits(['submit', 'topic-selected']);
+    const emits = defineEmits(['submit', 'topic-selected', 'score-update']);
     const store = useStore();
 
     const radioEls = ref();
@@ -172,13 +199,12 @@
     });
     const totalScore = ref(0);
     const checkedUp = ref({});
-
+    
     const modalSelectMeeting = ref();
     const modalCreateMeeting = ref();
-
+    
     const inputMeetingName = ref();
     const _formEl = ref();
-
 
     // props computed
     const meeting_name = computed(() => props.meeting_name);
@@ -202,11 +228,18 @@
         }, 0);
     });
 
+    const ResetForm = () => 
+    {
+        _formEl.value.reset();
+        tweened.number = 0;
+        Object.keys(checkedUp.value).forEach((keyname) => checkedUp.value[keyname] = 0);
+    }
+
     const ChangeTopic = (e) => emits('topic-selected', {cb: (response_data) => {
         if (response_data.status)
         {
             Modal.getOrCreateInstance(modalSelectMeeting.value).hide();
-            _formEl.value.reset();
+            ResetForm();
         }
 
     }, topic_id: e});
@@ -224,12 +257,11 @@
 
         
         const e = is_create;
-        
         const formData = new FormData(e.target);
         
         
         axios({
-            url: import.meta.env.VITE_VUE_API_URL + "meeting_topic/create_topic",
+            url: import.meta.env.VITE_VUE_API_URL + "/meeting_topic/create_topic",
             method: "POST",
             data: formData
         }).then((response) => {
@@ -298,13 +330,16 @@
 
     const SelectAllRowOfCol = (col) =>
     {
-        tbodyEl.value.querySelectorAll("input[type=radio]").forEach((row) => {
-            if (row.getAttribute('data-score') === col.toString())
-            {
-                row.click();
-                row.focus();
-            }
-        });
+        if (!store.getters.isProduction)
+        {
+            tbodyEl.value.querySelectorAll("input[type=radio]").forEach((row) => {
+                if (row.getAttribute('data-score') === col.toString())
+                {
+                    row.click();
+                    row.focus();
+                }
+            });
+        }
     }
 
     const checkUpScore = (e) => 
@@ -328,6 +363,7 @@
 
     watch(getTotalScoreChecked, (n) => {
         gsap.to(tweened, { duration: 0.5, number: Number(n) || 0});
+        emits('score-update', n);
     });
 
     watch(getSimpleQuestions, (newVal) => {

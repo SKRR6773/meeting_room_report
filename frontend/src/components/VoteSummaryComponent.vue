@@ -26,10 +26,10 @@
         </div>
         
         <div class="container">
-            <hr>
+            <!-- <hr> -->
         </div>
         <!-- summary -->
-        <div class="container px-3 py-3" v-if="is_render">
+        <!-- <div class="container px-3 py-3" v-if="is_render">
             <header class="mb-3">
                 <div class="d-flex">
                     <h1 class="mx-auto text-secondary header-title" style="text-decoration: underline;">รายงานสรุปผลทั้งหมด</h1>
@@ -38,7 +38,7 @@
             <section>
                 <AllVoteSummaryComponent @update_all_topics_score_persen="handleAllTopicsScorePersen" />
             </section>
-        </div>
+        </div> -->
     </div>
 </template>
 <script setup>
@@ -106,18 +106,11 @@
             }, (succ_data) => {
                 // success...
 
-                console.log("Report Data => ");
-                console.log(succ_data);
                 reportData.value = Object.keys(succ_data.data.raw_data).map((row) => succ_data.data.raw_data[row]);
 
                 store.commit('updateMeetingMetaData', () => {
-                    
-
-                    console.log("Report Data => ");
-                    console.log(reportData.value);
-    
-    
                     is_render.value = true;
+                    _LoadSummaryAllReportData();
                 });
 
             }, false, (warn_data) => {
@@ -128,6 +121,28 @@
 
 
             my_modules.sweetAlertServerError();
+        });
+    }
+
+
+    const _LoadSummaryAllReportData = () => 
+    {
+        axios({
+            url: import.meta.env.VITE_VUE_API_URL + "/meeting_topic/get_report_all_topics",
+            method: "POST"
+        }).then((response) => {
+            my_modules.sweetAlertReport(response.data, (err_data) => {
+                // errors ...
+            }, (succ_data) => {
+                // success ...
+                const value = Object.keys(succ_data.data.raw_data).map((row) => succ_data.data.raw_data[row]);
+                handleAllTopicsScorePersen(my_modules.calculatePercentage(5, value));
+
+            }, false, (warn_data) => {
+                // warnning ...
+            }, false, true);
+        }).catch((err) => {
+            console.error(err);
         });
     }
 

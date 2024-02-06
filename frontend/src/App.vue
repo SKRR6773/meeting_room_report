@@ -15,13 +15,13 @@
         <footer class="container mb-4">
             <hr>
             <section class="text-center text-secondary">
-                <h6>wiraphat@footer</h6>
+                <h6>@{{ get_footer_name }}</h6>
             </section>
         </footer>
     </div>
 </template>
 <script setup>
-    import { onMounted } from 'vue';
+    import { computed, onMounted } from 'vue';
     import { RouterLink, RouterView } from 'vue-router';
     import { useStore } from 'vuex';
     import '@/socket';
@@ -32,6 +32,8 @@
 
     const store = useStore();
 
+
+    const get_footer_name = computed(() => import.meta.env.VITE_VUE_FOOTER_NAME);
 
     onMounted(() => {
         if (!!localStorage.getItem('user_details') && !!localStorage.getItem('user_token'))

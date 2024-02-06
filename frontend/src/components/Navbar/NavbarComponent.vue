@@ -1,7 +1,7 @@
 <template>
     <nav class="navbar navbar-expand-sm bg-light my-2 shadow">
         <div class="container">
-            <a href="#" class="navbar-brand"><h4 class="text-secondary">แบบประเมินการสื่อสารและความร่วมมือ</h4></a>
+            <a href="#" class="navbar-brand"><h4 class="text-secondary">{{ get_brand_name }}</h4></a>
 
             <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="navbar-toggler-icon"></span>
@@ -37,8 +37,12 @@
     </nav>
 </template>
 <script setup>
+    import { computed } from 'vue';
     import UserProfileComponent from './UserProfileComponent.vue';
 
     // asssets
     import transImage from '../../assets/translate.png';
+
+
+    const get_brand_name = computed(() => import.meta.env.VITE_VUE_BRAND_NAME);
 </script>

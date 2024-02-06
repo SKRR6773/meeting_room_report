@@ -9,9 +9,6 @@ const fs = require('fs');
 const { QueryTypes } = require('sequelize');
 const { confirm } = require('@inquirer/prompts');
 
-// middleware
-const socket_io_mid = require('./middleware/socket.middleware');
-
 
 
 const app = express();
@@ -21,6 +18,7 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server);
+// io.path("/webapi2/socket.io");
 
 
 const IP = process.env.IP;
@@ -31,7 +29,7 @@ const LIMIT_FILE_UPLOAD = Number.parseInt(process.env.LIMIT_FILE_UPLOAD);
 // configure
 app.use(cors({
     origin: [
-        'http://localhost:5173'
+        'https://web.mrgshrimp.com', 'https://web.mrgshrimp.com/assetment_comunication/frontend/', 'https://web.mrgshrimp.com/assetment_comunication/frontend/topic'
     ]
 }));
 app.use(fileUpload({
@@ -56,7 +54,7 @@ const userRoleRouting = require('./routes/user_role.route');
 
 // routing . use
 app.use('/debug', debugRouting);
-app.use('/meeting_question', socket_io_mid(io), meetingQuestionRouting);
+app.use('/meeting_question', meetingQuestionRouting);
 app.use('/meeting_hooks', meetingHooksRouting);
 app.use('/meeting_topic', meetingTopicRouting);
 app.use('/meeting_votes', meetingVotesRouting);
@@ -66,8 +64,8 @@ app.use('/meeting_rooms', meetingRoomsRouting);
 app.use('/user_roles', userRoleRouting);
 
 // socket server config
-const SocketServe = require('./socket_serve/socket_serve');
-new SocketServe(io);
+// const SocketServe = require('./socket_serve/socket_serve');
+// new SocketServe(io);
 
 
 
