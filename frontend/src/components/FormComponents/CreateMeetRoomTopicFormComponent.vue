@@ -6,7 +6,7 @@
                 <div class="row gy-3">
                     <div class="col-md-12 col-lg-6">
                         <div class="form-floating">
-                            <input type="text" name="name" class="form-control" placeholder="ชื่อประชุม" required>
+                            <input type="text" name="name" class="form-control" placeholder="ชื่อประชุม" required @keydown="next2people">
                             <label for="floatingPassword">ชื่อประชุม</label>
                         </div>
                     </div>
@@ -20,14 +20,14 @@
                     </div> -->
                     <div class="col-md-6 col-lg-6">
                         <div class="form-floating">
-                            <input type="number" min="1" name="people_count" class="form-control" placeholder="จำนวนผู้เข้าร่วม" value="1" required>
+                            <input type="number" min="1" name="people_count" class="form-control" placeholder="จำนวนผู้เข้าร่วม" value="1" required ref="people_count_el" @keydown="next2details" />
                             <label for="floatingPassword">จำนวนผู้เข้าร่วม</label>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="form-floating">
-                            <textarea class="form-control" name="details" placeholder="รายละเอียด" style="height: 30vh;" required @keydown="chkShortCut"></textarea>
-                            <label for="floatingTextarea2">รายละเอียด</label>
+                            <textarea class="form-control" name="details" placeholder="รายละเอียด (ไม่จำเป็น)" style="height: 30vh;" @keydown="chkShortCut" ref="details_el"></textarea>
+                            <label for="floatingTextarea2">รายละเอียด *(ไม่จำเป็น)</label>
                         </div>
                     </div>
                 </div>
@@ -49,6 +49,9 @@
     const _form = ref();
     const _submitBtn = ref();
 
+    const people_count_el = ref();
+    const details_el = ref();
+
 
     const Submit = (e) => {
         emits('submit', e);
@@ -66,4 +69,23 @@
             _submitBtn.value.click();
         }
     };
+
+
+    const next2people = (e) => 
+    {
+        if (e.keyCode === 13)
+        {
+            e.preventDefault();
+            people_count_el.value.focus();
+        }
+    }
+    
+    const next2details = (e) => 
+    {
+        if (e.keyCode === 13)
+        {
+            e.preventDefault();
+            details_el.value.focus();
+        }
+    }
 </script>

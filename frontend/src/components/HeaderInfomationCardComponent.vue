@@ -71,7 +71,7 @@
         </div>
 
 
-        <div class="modal fade" id="modalShowAllReportTopics" tabindex="-1">
+        <div class="modal fade" id="modalShowAllReportTopics" tabindex="-1" ref="modalShowAllReportTopics">
             <div class="modal-dialog modal-fullscreen">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -80,11 +80,20 @@
                     </div>
                     <div class="modal-body">
                         <div class="container">
-                            <AdminReportComponent v-if="is_render_admin_report" />
+                            <AdminReportComponent @updateMeetingCount="(value) => meeting_count = value" v-if="is_render_admin_report" />
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary px-3" data-bs-toggle="#modalShowAllReportTopics" data-bs-dismiss="modal">ปิด</button>
+                        <div class="container-fluid h-100">
+                            <div class="d-flex" style="justify-content: space-between;">
+                                <div class="my-auto d-flex text-center justify-content-center align-items-center">
+                                    <h5 class="fw-bold text-secondary my-auto">ทั้งหมด <span class="badge bg-secondary fw-bold">{{ meeting_count }}</span> ประชุม</h5>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-secondary px-3" data-bs-toggle="#modalShowAllReportTopics" data-bs-dismiss="modal">ปิด</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -92,7 +101,7 @@
     </div>
 </template>
 <script setup>
-    import { computed, defineProps, ref } from 'vue';
+    import { computed, defineProps, ref, onMounted } from 'vue';
 
     import AdminReportComponent from './AdminComponents/AdminReportComponent.vue';
 
@@ -110,9 +119,20 @@
     });
 
 
+
+    const modalShowAllReportTopics = ref();
     const is_render_admin_report = ref(false);
 
     const get_progress_simple_text = computed(() => props.progress_simple_text);
     const get_this_topic_score_persen = computed(() => props.this_topic_score_persen.toFixed(2));
     const get_all_topics_score_persen = computed(() => props.all_topics_score_persen.toFixed(2));
+    const meeting_count = ref(0);
+
+
+    onMounted(() => {
+
+        modalShowAllReportTopics.value.addEventListener('hidden.bs.modal', () => {
+            is_render_admin_report.value = false;
+        });
+    }); 
 </script>
